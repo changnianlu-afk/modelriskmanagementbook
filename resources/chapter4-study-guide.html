@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chapter 4 Study Guide | First-Line Defense: Model Development / Model Owners</title>
+  <meta name="description" content="Chapter 4 study guide for Principles and Practices of Model Risk Management: First-Line Defense, model development, data treatment, model selection, monitoring, and synthetic PPNR lab." />
+  <style>
+    :root{
+      --text:#111827;
+      --muted:#4b5563;
+      --line:#d1d5db;
+      --soft:#f7f8fa;
+      --soft2:#eef2f7;
+      --accent:#173b63;
+      --accent2:#255d8f;
+      --good:#eef7f0;
+      --warn:#fff7e6;
+      --danger:#fff0f0;
+      --code:#0f172a;
+    }
+    *{box-sizing:border-box}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      margin:0;color:var(--text);line-height:1.65;background:#fff;
+    }
+    a{color:var(--accent2);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:1050px;margin:0 auto;padding:38px 24px 70px}
+    .hero{padding:24px 0 26px;border-bottom:1px solid var(--line)}
+    h1{font-size:38px;line-height:1.15;margin:0 0 10px;letter-spacing:-.4px}
+    .subtitle{font-size:20px;color:#28384b;margin:0 0 8px}
+    .meta{color:var(--muted);margin:0}
+    h2{font-size:27px;margin:42px 0 12px;padding-bottom:7px;border-bottom:2px solid #e5e7eb}
+    h3{font-size:20px;margin:28px 0 8px}
+    h4{font-size:17px;margin:22px 0 6px}
+    p{margin:9px 0 14px}
+    ul,ol{padding-left:24px}
+    li{margin:5px 0}
+    .toc{
+      background:var(--soft);border:1px solid var(--line);border-radius:10px;
+      padding:20px 24px;margin:26px 0 34px;
+    }
+    .toc h2{font-size:20px;margin:0 0 10px;padding:0;border:0}
+    .toc ol{columns:2;column-gap:40px;margin:0}
+    .toc li{break-inside:avoid;margin:5px 0}
+    .callout{
+      border-left:5px solid var(--accent2);background:var(--soft);
+      padding:15px 18px;margin:18px 0;border-radius:4px;
+    }
+    .key{background:#f1f6fb;border-left-color:#255d8f}
+    .warning{background:var(--warn);border-left-color:#b7791f}
+    .conclusion{background:var(--good);border-left-color:#2f855a}
+    .danger{background:var(--danger);border-left-color:#b83232}
+    .flow{
+      font-weight:600;text-align:center;padding:15px 12px;background:var(--soft2);
+      border-radius:8px;margin:14px 0;word-spacing:3px;
+    }
+    table{
+      width:100%;border-collapse:collapse;margin:16px 0 24px;font-size:15px;
+    }
+    th,td{border:1px solid var(--line);padding:10px 11px;vertical-align:top}
+    th{background:#eef2f7;text-align:left}
+    tr:nth-child(even) td{background:#fbfcfd}
+    code{
+      font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+      background:#f2f4f7;border-radius:4px;padding:2px 5px;font-size:.94em
+    }
+    pre{
+      background:var(--code);color:#e5e7eb;padding:16px 18px;border-radius:8px;
+      overflow:auto;line-height:1.45;font-size:14px
+    }
+    pre code{background:transparent;padding:0;color:inherit}
+    .downloads{
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:12px;margin:18px 0 28px
+    }
+    .download{
+      display:block;border:1px solid var(--line);border-radius:9px;padding:14px 16px;
+      background:#fff;font-weight:600
+    }
+    .download small{display:block;color:var(--muted);font-weight:400;margin-top:3px}
+    .q{
+      padding:15px 18px;border:1px solid var(--line);border-radius:8px;margin:12px 0;background:#fff
+    }
+    .q strong{color:var(--accent)}
+    .tag{
+      display:inline-block;font-size:12px;font-weight:700;letter-spacing:.2px;
+      padding:3px 8px;border-radius:999px;background:#e8eef5;color:#173b63;margin-right:5px
+    }
+    .small{font-size:14px;color:var(--muted)}
+    .footer{
+      margin-top:55px;padding-top:18px;border-top:1px solid var(--line);
+      color:var(--muted);font-size:14px
+    }
+    @media(max-width:720px){
+      .wrap{padding:25px 16px 50px}
+      h1{font-size:31px}
+      .toc ol{columns:1}
+      table{font-size:14px}
+    }
+    @media print{
+      .wrap{max-width:none;padding:0}
+      a{color:inherit;text-decoration:none}
+      .toc,.downloads{break-inside:avoid}
+      h2,h3{break-after:avoid}
+      table,.callout,.q{break-inside:avoid}
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="tag">CHAPTER 4</div>
+    <div class="tag">STUDY GUIDE</div>
+    <h1>First-Line Defense: Model Development / Model Owners</h1>
+    <p class="subtitle">Principles and Practices of Model Risk Management (MRM)</p>
+    <p class="meta">Companion lab: Synthetic CCAR/PPNR data treatment, model selection, development testing, and benchmarking</p>
+  </header>
+
+  <div class="callout key">
+    <strong>Central idea.</strong> The First Line owns the model as a business and production asset.
+    It therefore owns the quality of development, implementation, use, monitoring, change management,
+    and the evidence needed for independent challenge.
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#first-line">Who is the First Line?</a></li>
+      <li><a href="#interconnection">Interconnection among the three lines</a></li>
+      <li><a href="#responsibilities">Key First-Line responsibilities</a></li>
+      <li><a href="#policy">Policy, standards, and procedures</a></li>
+      <li><a href="#development">Developing a fit-for-purpose model</a></li>
+      <li><a href="#data">Data treatment and data tests</a></li>
+      <li><a href="#identification">Model Identification Tool</a></li>
+      <li><a href="#tiering">Taxonomy and tiering</a></li>
+      <li><a href="#implementation">Implementation and monitoring</a></li>
+      <li><a href="#risk">Model-risk identification and mitigation</a></li>
+      <li><a href="#lab">Synthetic PPNR Development Lab</a></li>
+      <li><a href="#conclusions">Development conclusions</a></li>
+    </ol>
+  </nav>
+
+  <section id="first-line">
+    <h2>1. Who is the First Line of Defense?</h2>
+    <p>The First Line includes business model owners, model developers, model users, and implementation or technology stakeholders involved in model creation, implementation, use, and day-to-day management.</p>
+    <table>
+      <thead><tr><th>Model Owner</th><th>Model Developer</th></tr></thead>
+      <tbody>
+        <tr><td>Owns the business purpose and intended use.</td><td>Designs and develops the model.</td></tr>
+        <tr><td>Represents users and business stakeholders.</td><td>Selects methodology, variables, assumptions, and calibration approach.</td></tr>
+        <tr><td>Ensures appropriate use and business accountability.</td><td>Performs development testing and prepares code and technical documentation.</td></tr>
+        <tr><td>Owns ongoing performance monitoring and business response.</td><td>Supports monitoring design, diagnostics, and model changes.</td></tr>
+        <tr><td>Accountable for the model as used in the business.</td><td>Accountable for technical soundness of model development.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><strong>Study point:</strong> Model ownership and model development can be separate roles, but they must operate as one accountable First-Line process.</div>
+  </section>
+
+  <section id="interconnection">
+    <h2>2. Interconnection among the three lines of defense</h2>
+    <p>The three lines are not isolated silos. They form a system of checks, challenge, remediation, and assurance.</p>
+    <div class="flow">First-Line activity → evidence → Second-Line challenge → remediation → Third-Line assurance</div>
+    <table>
+      <thead><tr><th>Line</th><th>Primary role</th><th>Connection to the First Line</th></tr></thead>
+      <tbody>
+        <tr><td>First Line</td><td>Builds, implements, uses, operates, and monitors models.</td><td>Produces the model and the evidence needed for review.</td></tr>
+        <tr><td>Second Line</td><td>Independent validation, governance, challenge, and model-risk oversight.</td><td>Assesses First-Line evidence and performs independent testing.</td></tr>
+        <tr><td>Third Line</td><td>Independent assurance over the overall MRM framework.</td><td>Assesses whether First- and Second-Line controls are working effectively.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout key"><strong>Key theme: transparency.</strong> The First Line should provide enough evidence for an independent party to understand why the model works, where it may fail, what assumptions matter, and what controls exist.</div>
+  </section>
+
+  <section id="responsibilities">
+    <h2>3. Key First-Line responsibilities</h2>
+    <ol>
+      <li>Define business purpose and intended use.</li>
+      <li>Assess feasibility, resources, data availability, technology, and governance support.</li>
+      <li>Source, assess, and treat model data.</li>
+      <li>Select methodologies, variables, assumptions, and model form.</li>
+      <li>Calibrate and perform development testing.</li>
+      <li>Document assumptions, limitations, weaknesses, and known deficiencies.</li>
+      <li>Benchmark outcomes and consider challenger models.</li>
+      <li>Support independent validation and remediate findings.</li>
+      <li>Implement the approved model faithfully in production.</li>
+      <li>Monitor performance, manage changes, and mitigate emerging model risk.</li>
+    </ol>
+  </section>
+
+  <section id="policy">
+    <h2>4. MRM policy, standards, and procedures — First-Line perspective</h2>
+    <table>
+      <thead><tr><th>Layer</th><th>Meaning</th><th>First-Line example</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Policy</strong></td><td>What must be done.</td><td>Material models must be validated before production use.</td></tr>
+        <tr><td><strong>Standard</strong></td><td>What acceptable execution looks like.</td><td>Development must include documented data tests, out-of-sample testing, and limitations.</td></tr>
+        <tr><td><strong>Procedure</strong></td><td>How the work is actually performed.</td><td>Run the approved data-quality checks, calibration diagnostics, monitoring process, and change workflow.</td></tr>
+      </tbody>
+    </table>
+    <p>The First Line demonstrates compliance through reproducible data, code, testing, documentation, approvals, monitoring records, and change records.</p>
+  </section>
+
+  <section id="development">
+    <h2>5. Procedure for developing a conceptually sound, fit-for-purpose model</h2>
+    <div class="flow">Business need → intended use → feasibility → data → methodology → selection → calibration → testing → benchmarking → documentation → validation → implementation → monitoring</div>
+    <h3>Development logic</h3>
+    <ol>
+      <li><strong>Define the business question.</strong> What decision will the model support?</li>
+      <li><strong>Establish intended use and boundaries.</strong> Specify what the model can and cannot be used for.</li>
+      <li><strong>Assess feasibility.</strong> Expertise, data, time, budget, technology, validation, and governance.</li>
+      <li><strong>Assess data.</strong> Relevance, quality, historical depth, representativeness, and transformations.</li>
+      <li><strong>Select methodology.</strong> The method should follow the business purpose and data structure.</li>
+      <li><strong>Select variables and calibrate.</strong> Balance explanatory power, projection power, parsimony, and interpretability.</li>
+      <li><strong>Perform development testing.</strong> Assumptions, residuals, stability, overfitting, and out-of-sample performance.</li>
+      <li><strong>Benchmark and challenge.</strong> Compare the model with simpler or alternative approaches.</li>
+      <li><strong>Document limitations and controls.</strong></li>
+      <li><strong>Submit the evidence package for independent validation.</strong></li>
+    </ol>
+    <div class="callout warning"><strong>Important:</strong> Statistical sophistication does not compensate for weak purpose, irrelevant data, implausible economics, or poor projection performance.</div>
+  </section>
+
+  <section id="data">
+    <h2>6. Data treatment and data tests</h2>
+    <p><strong>Data treatment</strong> prepares or corrects the data. <strong>Data testing</strong> asks whether the data are suitable for the intended model.</p>
+    <div class="flow">Source → integration → relevance → quality → errors → treatment → adequacy → statistical testing → documentation</div>
+
+    <table>
+      <thead><tr><th>Test / procedure</th><th>Question</th><th>MRM interpretation</th></tr></thead>
+      <tbody>
+        <tr><td>Missing-value review</td><td>Is the dataset complete?</td><td>Missingness may bias estimation or weaken representativeness.</td></tr>
+        <tr><td>Duplicate review</td><td>Are observations unintentionally overweighted?</td><td>Duplicates can distort calibration and summary statistics.</td></tr>
+        <tr><td>Data-type checks</td><td>Are numerical, categorical, and date fields stored correctly?</td><td>Format errors can silently corrupt analysis.</td></tr>
+        <tr><td>IQR / Z-score outlier review</td><td>Which observations are unusually extreme?</td><td>Investigate before deletion or capping; an extreme observation may be economically real.</td></tr>
+        <tr><td>Winsorization</td><td>How sensitive is the model to extreme observations?</td><td>Caps extremes while retaining observations; treatment must be justified.</td></tr>
+        <tr><td>Skewness / kurtosis</td><td>Are distributions asymmetric or heavy-tailed?</td><td>May motivate transformations or robust techniques.</td></tr>
+        <tr><td>ADF stationarity test</td><td>Does a time series appear to contain a unit root?</td><td>Nonstationarity can produce unstable estimates and spurious regression.</td></tr>
+        <tr><td>Autocorrelation / Durbin-Watson</td><td>Is serial dependence left unexplained?</td><td>Residual dependence may violate regression assumptions.</td></tr>
+        <tr><td>Correlation / VIF</td><td>Do predictors duplicate one another?</td><td>High VIF indicates unstable coefficients and weak incremental information.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout key"><strong>Best question:</strong> “Is this dataset sufficiently relevant, reliable, representative, and statistically appropriate for the model’s intended use?” That is stronger than merely asking whether the data are clean.</div>
+  </section>
+
+  <section id="identification">
+    <h2>7. Model Identification Tool</h2>
+    <p>A model-identification process separates models from non-model analytical tools so that true models enter the appropriate inventory, validation, monitoring, change-management, and governance processes.</p>
+    <div class="flow">Quantitative method? → theoretical/statistical transformation? → estimation or uncertainty? → material decision use? → model / non-model</div>
+    <div class="callout warning"><strong>Why it matters:</strong> No identification → no inventory → no tiering → no validation scope → no monitoring requirements → unmanaged model risk.</div>
+    <p class="small">This is a useful extension to the Chapter 4 study guide; it is not developed as a standalone section in the supplied Chapter 4 proof.</p>
+  </section>
+
+  <section id="tiering">
+    <h2>8. Why taxonomy and tiering are the cornerstone of governance and control</h2>
+    <p><strong>Taxonomy</strong> organizes models by type, purpose, or use. <strong>Tiering</strong> ranks them by risk, materiality, exposure, and complexity.</p>
+    <div class="flow">Taxonomy + Tiering → validation depth → monitoring frequency → approval authority → documentation → issue severity → reporting → resource allocation</div>
+    <p>Without taxonomy and tiering, an institution cannot apply a risk-based MRM framework consistently or efficiently.</p>
+  </section>
+
+  <section id="implementation">
+    <h2>9. Model implementation and performance monitoring</h2>
+    <p>Validation is a point-in-time control. Production use is continuous. After implementation, data, customers, products, economic relationships, technology, and upstream systems can all change.</p>
+    <p>The First Line therefore develops the monitoring plan, defines model KPIs and thresholds, performs monitoring at the required cadence, investigates poor performance, initiates remediation, and reports results to stakeholders and the Second Line.</p>
+    <div class="callout key"><strong>Key distinction:</strong> Independent validation provides periodic assurance; First-Line monitoring provides continuous ownership.</div>
+  </section>
+
+  <section id="risk">
+    <h2>10. Model-risk identification, assessment, and mitigation</h2>
+    <div class="flow">Identify → Assess → Mitigate → Monitor residual risk</div>
+    <p>Potential mitigation actions include better data, methodology changes, recalibration, overlays, usage restrictions, enhanced monitoring, redevelopment, replacement, or retirement.</p>
+    <div class="callout"><strong>Objective:</strong> Model-risk mitigation does not mean eliminating all uncertainty. It means bringing residual model risk within the institution’s risk appetite.</div>
+  </section>
+
+  <section id="lab">
+    <h2>11. Synthetic PPNR Development Lab</h2>
+
+    <div class="downloads">
+      <a class="download" href="Ch004_CCARDemo_Data.csv">Ch004_CCARDemo_Data.csv
+        <small>Synthetic monthly CCAR/PPNR-style teaching dataset</small>
+      </a>
+      <a class="download" href="Ch004_Data_Treatment_Model_Selection.ipynb">Ch004_Data_Treatment_Model_Selection.ipynb
+        <small>Jupyter notebook: data tests, selection, calibration, and benchmarking</small>
+      </a>
+    </div>
+
+    <h3>A. What the dataset represents</h3>
+    <p>The dataset is a deliberately imperfect monthly time series covering 2018–2025. It contains 96 intended monthly observations plus one intentionally duplicated record. It resembles a simplified bank PPNR/noninterest-income forecasting problem. It is educational data, not actual bank, Federal Reserve, or CCAR data.</p>
+
+    <table>
+      <thead><tr><th>Variable</th><th>Role</th><th>Economic interpretation</th></tr></thead>
+      <tbody>
+        <tr><td><code>date</code></td><td>Time index</td><td>Monthly observation date.</td></tr>
+        <tr><td><code>unemployment_rate</code></td><td>Primary macro predictor</td><td>Higher unemployment is designed to weaken fee income.</td></tr>
+        <tr><td><code>unemployment_alt</code></td><td>Redundant predictor</td><td>Highly correlated alternative unemployment measure inserted to demonstrate multicollinearity.</td></tr>
+        <tr><td><code>gdp_growth</code></td><td>Macro predictor</td><td>Stronger growth is designed to support fee income.</td></tr>
+        <tr><td><code>inflation</code></td><td>Macro predictor</td><td>Allows macro sensitivity and stationarity testing.</td></tr>
+        <tr><td><code>treasury_10y</code></td><td>Rate predictor</td><td>Allows interest-rate sensitivity testing.</td></tr>
+        <tr><td><code>market_return</code></td><td>Market predictor</td><td>Stronger markets are designed to support market-sensitive fee income.</td></tr>
+        <tr><td><code>fee_income</code></td><td>Dependent variable / PPNR proxy</td><td>Synthetic noninterest/fee-income outcome to be forecast.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>B. Deliberately inserted data problems</h3>
+    <ul>
+      <li>One missing observation in unemployment.</li>
+      <li>One missing observation in GDP growth.</li>
+      <li>One missing observation in inflation.</li>
+      <li>One missing observation in market return.</li>
+      <li>One exact duplicate row.</li>
+      <li>Two deliberately extreme fee-income observations.</li>
+      <li>A highly correlated alternative unemployment predictor.</li>
+    </ul>
+    <p>The defects make the data-treatment tests substantive rather than ceremonial.</p>
+
+    <h3>C. Conceptual synthetic PPNR model</h3>
+    <p>The target was constructed so that fee income is economically related to macro and market conditions, together with a time trend and random noise:</p>
+    <pre><code>Fee Income
+  = baseline
+  - unemployment effect
+  + GDP-growth effect
+  - inflation effect
+  + interest-rate effect
+  + market-return effect
+  + time trend
+  + random noise</code></pre>
+    <p>The model is intentionally simpler than a production CCAR PPNR model. Its purpose is to let students see whether the development process can recover sensible relationships, identify redundant predictors, diagnose time-series weaknesses, and reject a specification that does not generalize well.</p>
+
+    <h3>D. What the notebook does</h3>
+    <div class="flow">Raw data → integrity → treatment → diagnostics → candidate models → selection → residual tests → holdout → benchmark → First-Line conclusion</div>
+
+    <h4>1. Integrity and completeness</h4>
+    <pre><code>df.shape
+df.isna().sum()
+df.duplicated().sum()
+df.dtypes</code></pre>
+    <p>The raw file contains 97 rows, including one duplicate. After duplicate removal, 96 distinct monthly observations remain.</p>
+
+    <h4>2. Missing-value treatment</h4>
+    <pre><code>df[c] = df[c].fillna(df[c].median())</code></pre>
+    <p>Median imputation is used for demonstration. A production model should justify the treatment according to the missingness mechanism, materiality, and intended use.</p>
+
+    <h4>3. Outlier detection and Winsorization</h4>
+    <p>The notebook uses the IQR rule to identify unusual observations and then applies 1%/99% Winsorization to the target for the teaching exercise.</p>
+
+    <h4>4. Distribution diagnostics</h4>
+    <p>Skewness and excess kurtosis are calculated to determine whether transformations or more robust techniques might be appropriate.</p>
+
+    <h4>5. Stationarity and autocorrelation</h4>
+    <p>The Augmented Dickey-Fuller test asks whether a series appears to contain a unit root. Autocorrelation analysis checks for time dependence. These are important because nonstationary variables may create spurious time-series relationships.</p>
+
+    <h4>6. Correlation and VIF</h4>
+    <p>The intentionally redundant unemployment variable generates a high correlation and high VIF, illustrating how multicollinearity can destabilize coefficients.</p>
+
+    <h4>7. Candidate-model selection</h4>
+    <p>A full OLS specification is compared with a reduced specification. AIC and BIC reward model fit but penalize unnecessary complexity.</p>
+
+    <h4>8. LASSO selection</h4>
+    <p>LASSO provides a second variable-selection perspective by shrinking weak or redundant standardized coefficients toward zero.</p>
+
+    <h4>9. Calibration diagnostics</h4>
+    <p>Durbin-Watson tests residual autocorrelation. Breusch-Pagan and White tests assess whether residual variance is approximately stable.</p>
+
+    <h4>10. Chronological out-of-sample testing</h4>
+    <p>The first 80% of observations are used for development and the last 20% are held out. This preserves time order and better represents real forecasting than a random split.</p>
+
+    <h4>11. Benchmarking</h4>
+    <p>The primary specification is compared with a simpler challenger using only unemployment and GDP growth. Complexity is justified only when it produces stable incremental value.</p>
+  </section>
+
+  <section id="conclusions">
+    <h2>12. Interpretation and development conclusions</h2>
+    <table>
+      <thead><tr><th>Finding</th><th>Approximate result</th><th>Conclusion</th></tr></thead>
+      <tbody>
+        <tr><td>Raw observations</td><td>97 before duplicate removal</td><td>One duplicate is intentional; 96 distinct months remain.</td></tr>
+        <tr><td>Missing values</td><td>1 each in unemployment, GDP growth, inflation, and market return</td><td>Completeness defects are visible and treated by median imputation for demonstration.</td></tr>
+        <tr><td>Fee-income outliers</td><td>Intentional high ≈ 136.98 and low ≈ 60.50 among IQR flags</td><td>Extreme observations materially affect the target and require investigation or treatment.</td></tr>
+        <tr><td>Unemployment correlation</td><td>≈ 0.96</td><td>The two unemployment predictors contain largely redundant information.</td></tr>
+        <tr><td>VIF</td><td>Both unemployment measures ≈ 14</td><td>Severe multicollinearity; retaining both requires strong justification.</td></tr>
+        <tr><td>ADF</td><td>GDP growth stationary; unemployment/inflation weak or nonstationary in the sample</td><td>The time-series specification should be revisited before production use.</td></tr>
+        <tr><td>AIC/BIC</td><td>Reduced model lower than full model</td><td>Dropping the redundant unemployment variable improves parsimony.</td></tr>
+        <tr><td>Durbin-Watson</td><td>≈ 2.07</td><td>No obvious first-order residual autocorrelation in the reduced OLS.</td></tr>
+        <tr><td>BP / White</td><td>High p-values</td><td>No strong evidence of heteroscedasticity in the demonstration.</td></tr>
+        <tr><td>Primary holdout</td><td>RMSE ≈ 7.57; R² ≈ -0.67</td><td>The primary model does not generalize well.</td></tr>
+        <tr><td>Simple benchmark</td><td>RMSE ≈ 5.72; R² ≈ 0.05</td><td>The simpler GDP/unemployment benchmark outperforms the primary model.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout danger">
+      <strong>Development conclusion:</strong> The current primary model should not be considered production-ready merely because the regression runs successfully. Several time-series variables raise stationarity concerns, weak variables add complexity without clear value, and the primary model performs poorly on the chronological holdout relative to the simpler benchmark.
+    </div>
+
+    <h3>Recommended next development iteration</h3>
+    <ol>
+      <li>Revisit stationarity treatment, including differencing, growth rates, detrending, or cointegration where conceptually appropriate.</li>
+      <li>Remove or reconsider weak and redundant predictors.</li>
+      <li>Test economically plausible lag structures.</li>
+      <li>Reassess transformations and specification.</li>
+      <li>Repeat chronological holdout testing.</li>
+      <li>Repeat benchmarking and challenger comparison.</li>
+      <li>Document residual limitations and proposed monitoring controls.</li>
+    </ol>
+
+    <div class="callout conclusion">
+      <strong>Most important teaching lesson:</strong> A sound First-Line development process must sometimes reject or redesign its own model before independent validation. The objective of development testing is not to collect check marks; it is to discover whether the model deserves to proceed.
+    </div>
+
+    <h3>Recommended student workflow</h3>
+    <ol>
+      <li>Save <code>Ch004_CCARDemo_Data.csv</code>, <code>Ch004_Data_Treatment_Model_Selection.ipynb</code>, and this HTML file in the same folder.</li>
+      <li>Run the notebook sequentially and record each data-quality finding before applying treatment.</li>
+      <li>Explain why each treatment is appropriate or inappropriate instead of reporting only code output.</li>
+      <li>Compare full and reduced OLS models using economics, AIC/BIC, VIF, and LASSO.</li>
+      <li>Interpret residual diagnostics and stationarity tests as model-risk evidence.</li>
+      <li>Compare primary and benchmark holdout performance and decide whether the primary model should proceed.</li>
+      <li>Write a First-Line development conclusion covering data adequacy, treatments, assumptions, model choice, projection performance, limitations, and monitoring.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Study Questions</h2>
+    <div class="q"><strong>1.</strong> Who belongs to the First Line of Defense, and how do model ownership and model development differ?</div>
+    <div class="q"><strong>2.</strong> Why is transparency the central First-Line theme in the three-lines framework?</div>
+    <div class="q"><strong>3.</strong> What evidence should the First Line produce so that the Second Line can perform effective challenge?</div>
+    <div class="q"><strong>4.</strong> Explain the difference among MRM policy, standards, and procedures from the First-Line perspective.</div>
+    <div class="q"><strong>5.</strong> Describe the process for developing a conceptually sound, fit-for-purpose model.</div>
+    <div class="q"><strong>6.</strong> Distinguish data cleaning/treatment from assessment of data relevance and adequacy.</div>
+    <div class="q"><strong>7.</strong> Why is a Model Identification Tool important to MRM governance?</div>
+    <div class="q"><strong>8.</strong> How do model taxonomy and tiering determine the intensity of governance and control?</div>
+    <div class="q"><strong>9.</strong> Why should implementation and performance monitoring remain First-Line responsibilities after validation?</div>
+    <div class="q"><strong>10.</strong> In the synthetic PPNR lab, why should the primary model be redesigned even though several in-sample diagnostic tests are acceptable?</div>
+  </section>
+
+  <footer class="footer">
+    <strong>Source basis.</strong> This study guide is grounded in the supplied Chapter 4 proof,
+    especially its discussion of the three lines of defense, First-Line model development, input-data
+    assessment, data testing, model selection and calibration, benchmarking/challenger models,
+    documentation, implementation, monitoring, and change management. The synthetic dataset and
+    Python notebook are companion teaching materials created for this study exercise and are not
+    reproduced textbook or regulatory datasets.
+  </footer>
+
+</div>
+</body>
+</html>
