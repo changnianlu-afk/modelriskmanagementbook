@@ -81,6 +81,29 @@
       gap: 22px;
     }
 
+    .article-card {
+      margin-top: 14px;
+      border: 1px solid #e3e7ee;
+      border-radius: 14px;
+      padding: 18px 20px;
+      background: #fafbfd;
+    }
+
+    .article-card h3 {
+      font-size: 18px;
+      margin: 0 0 7px;
+      line-height: 1.35;
+    }
+
+    .article-card p {
+      margin: 7px 0;
+    }
+
+    .article-meta {
+      color: #666;
+      font-size: 13px;
+    }
+
     @media (max-width: 780px) {
       .grid {
         grid-template-columns: 1fr;
@@ -120,6 +143,7 @@
       <div class="btns">
         <a class="primary" href="#contact">Contact</a>
         <a href="#resources">Resources</a>
+        <a href="#articles">Articles</a>
         <a href="#toc">Contents</a>
       </div>
 
@@ -150,7 +174,6 @@
       <h2>Key topics</h2>
 
       <div class="grid">
-
         <div>
           <ul>
             <li>SR 26-2 and current model risk governance expectations</li>
@@ -170,7 +193,6 @@
             <li>AI/ML and generative AI model risk management</li>
           </ul>
         </div>
-
       </div>
     </div>
 
@@ -195,12 +217,41 @@
     </div>
 
 
+    <!-- Articles by the Authors -->
+    <div class="section" id="articles">
+      <h2>Articles by the Authors</h2>
+
+      <p>
+        Research notes and commentary extending themes from the book into current questions
+        in financial markets, monetary policy, quantitative risk, AI, and model governance.
+      </p>
+
+      <div class="article-card">
+        <div class="article-meta">Charlie Lu · September 2026 · Monetary Policy &amp; Financial Conditions</div>
+        <h3>
+          <a href="articles/monetary-neutrality-beyond-the-fed-funds-rate.html">
+            Monetary Neutrality Is More Than the Fed Funds Rate
+          </a>
+        </h3>
+        <p>
+          Why the effective monetary stance should be evaluated across the yield curve,
+          credit conditions, term premia, liquidity, and the Federal Reserve’s balance sheet—not
+          only the overnight policy rate.
+        </p>
+        <p>
+          <a href="articles/monetary-neutrality-beyond-the-fed-funds-rate.html">
+            Read the full article →
+          </a>
+        </p>
+      </div>
+    </div>
+
+
     <!-- Resources -->
     <div class="section" id="resources">
       <h2>Resources</h2>
 
       <ul>
-
         <li>
           <a href="resources/chapter1-study-guide.html">
             Chapter 1 — Foundations of Model Risk Management: Study Guide
@@ -232,11 +283,7 @@
         </li>
 
         <li>
-          <a
-            href="assets/bios/Charlie_Lu_Bio.pdf"
-            target="_blank"
-            rel="noopener"
-          >
+          <a href="assets/bios/Charlie_Lu_Bio.pdf" target="_blank" rel="noopener">
             Download Charlie Lu bio (PDF)
           </a>
         </li>
@@ -245,7 +292,6 @@
         <li>Templates (coming soon)</li>
         <li>Additional code notebooks (coming soon)</li>
         <li>Errata (coming soon)</li>
-
       </ul>
 
       <p class="note">
