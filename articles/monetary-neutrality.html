@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Monetary Neutrality Is More Than the Fed Funds Rate | Charlie Lu</title>
+  <meta name="description" content="A policy essay by Charlie Lu arguing that monetary neutrality should be evaluated across the yield curve, credit conditions, and the Federal Reserve balance sheet—not only the federal funds rate." />
+  <meta name="author" content="Charlie Lu" />
+  <style>
+    :root {
+      --ink:#111827; --muted:#5b6472; --line:#e5e7eb; --soft:#f6f8fb;
+      --accent:#174ea6; --accent2:#eaf1ff; --quote:#0f3d75;
+    }
+    * { box-sizing:border-box; }
+    body {
+      margin:0; color:var(--ink); background:#fff;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      line-height:1.68;
+    }
+    .wrap { max-width:920px; margin:0 auto; padding:34px 22px 64px; }
+    .topnav {
+      display:flex; justify-content:space-between; gap:20px; align-items:center;
+      padding-bottom:18px; border-bottom:1px solid var(--line);
+      font-size:14px;
+    }
+    .topnav a { color:var(--accent); text-decoration:none; }
+    .hero { padding:48px 0 26px; }
+    .eyebrow {
+      color:var(--accent); font-weight:700; letter-spacing:.04em;
+      text-transform:uppercase; font-size:12px; margin-bottom:10px;
+    }
+    h1 { font-size:43px; line-height:1.12; margin:0 0 14px; letter-spacing:-.02em; }
+    .subtitle { font-size:20px; line-height:1.45; color:#374151; margin:0 0 15px; }
+    .meta { color:var(--muted); font-size:14px; }
+    .lede {
+      margin:26px 0 8px; padding:20px 22px; border-left:4px solid var(--accent);
+      background:var(--soft); border-radius:0 10px 10px 0; font-size:18px;
+    }
+    .keyline {
+      margin:25px 0 32px; padding:18px 20px; background:var(--accent2);
+      border:1px solid #d8e5ff; border-radius:12px; text-align:center;
+      font-weight:750; font-size:19px; color:var(--quote);
+    }
+    article { max-width:790px; margin:0 auto; }
+    article h1 { display:none; }
+    article h2, article h1 + h2 { font-size:27px; line-height:1.25; margin:42px 0 12px; }
+    article h1:not(:first-child) { display:block; font-size:27px; line-height:1.25; margin:42px 0 12px; }
+    article p { margin:0 0 17px; }
+    article strong { color:#111; }
+    .math.display {
+      overflow-x:auto; padding:13px 10px; margin:17px 0 22px;
+      background:#fbfcfe; border:1px solid var(--line); border-radius:10px;
+      text-align:center;
+    }
+    #refs-marker { margin-top:48px; }
+    .note {
+      margin:34px 0; padding:15px 18px; background:#fff8e8;
+      border:1px solid #f1dfad; border-radius:10px; color:#55451d; font-size:14px;
+    }
+    footer {
+      margin-top:48px; padding-top:24px; border-top:1px solid var(--line);
+      color:var(--muted); font-size:13px;
+    }
+    a { color:var(--accent); }
+    @media(max-width:760px) {
+      .topnav { display:block; }
+      .topnav div:last-child { margin-top:7px; }
+      h1 { font-size:34px; }
+      .subtitle { font-size:18px; }
+      .wrap { padding:24px 18px 50px; }
+    }
+    @media print {
+      .topnav { display:none; }
+      .wrap { max-width:none; }
+      body { font-size:11pt; }
+    }
+  </style>
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <nav class="topnav">
+    <div><strong>Principles and Practices of Model Risk Management</strong></div>
+    <div><a href="../index.html">Book Home</a> · <a href="../index.html#articles">Articles by the Authors</a></div>
+  </nav>
+
+  <header class="hero">
+    <div class="eyebrow">Articles by the Authors · Monetary Policy & Financial Conditions</div>
+    <h1>Monetary Neutrality Is More Than the Fed Funds Rate</h1>
+    <p class="subtitle">Why the Yield Curve and the Federal Reserve’s Balance Sheet Belong in the Policy Equation</p>
+    <p class="meta"><strong>Charlie Lu</strong> · September 2026 · Policy essay</p>
+
+    <div class="lede">
+      Monetary policy is often summarized by one number: the federal funds rate. But households,
+      corporations and financial markets operate across an entire yield curve. A proper assessment
+      of monetary neutrality should therefore incorporate short rates, long rates, credit conditions,
+      term premia, liquidity and the Federal Reserve’s balance sheet.
+    </div>
+    <div class="keyline">The Fed sets the short rate. The economy lives on the yield curve.</div>
+  </header>
+
+  <article>
+<p>Central bankers often discuss monetary policy in relation to the
+“neutral rate”—the interest rate that, over time, is consistent with an
+economy operating near potential while inflation is stable around
+target. In practice, much of this discussion centers on the federal
+funds rate. That framework is useful, but incomplete.</p>
+<p>The economy does not borrow only at the federal funds rate. A
+household buying a home typically borrows at a mortgage rate that is
+linked more closely to longer-term Treasury yields and mortgage-market
+spreads. A corporation considering a new factory or data center
+confronts multi-year borrowing costs and its weighted average cost of
+capital. Equity valuations depend partly on longer-term discount rates.
+Governments refinance themselves across the Treasury curve.</p>
+<p>For this reason, the effective stance of monetary policy should not
+be judged solely by comparing the federal funds rate with an estimated
+short-term neutral rate, r*. It should be evaluated through the entire
+term structure of interest rates and the broader monetary and financial
+environment.</p>
+<p><span class="math display">\[\boxed{\text{Effective Monetary Stance}
+= f\left( r_{short},r_{long},TP,B_{Fed},Credit,Liquidity
+\right)}\]</span></p>
+<p>Here, TP is the bond-market term premium: the extra yield investors
+require to hold a longer-maturity bond rather than repeatedly rolling
+over short-term instruments. B_Fed denotes the size and composition of
+the Federal Reserve’s balance sheet. Credit refers to both the price and
+availability of private borrowing—such as corporate and household credit
+spreads, lending standards, and bank credit growth. Liquidity refers to
+the ease with which funding and financial assets can be financed and
+traded without large price dislocations; relevant indicators include
+reserve availability, repo and money-market conditions, bid-ask spreads,
+and market depth. Federal Reserve research has explicitly examined a
+long-term neutral interest rate, recognizing that long rates can be
+especially important for spending decisions.</p>
+<h1 id="there-is-in-effect-a-neutral-term-structure">There Is, in
+Effect, a Neutral Term Structure</h1>
+<p>The familiar expectations decomposition gives a useful starting
+point:</p>
+<p><span class="math display">\[y_{10,t} \approx \frac{1}{10}\sum_{i =
+1}^{10}E_{t}\left( r_{i} \right) + TP_{10,t}\]</span></p>
+<p>The 10-year Treasury yield therefore reflects the expected path of
+future short-term rates plus a term premium. The latter can move because
+of duration risk, inflation uncertainty, Treasury supply, investor risk
+appetite, and other forces.</p>
+<p>A 10-year yield can rise even when the Fed does not change the
+overnight rate. When that happens, financial conditions can tighten
+without an additional FOMC rate increase. This is precisely why a
+neutral-rate concept confined to the overnight rate can miss an
+important part of the monetary transmission mechanism.</p>
+<p>A useful conceptual extension is a neutral term structure. At each
+maturity τ, define the neutral nominal yield as the yield consistent
+with sustainable real activity, inflation expectations anchored at the
+Fed’s objective, and a normal or equilibrium term premium:</p>
+<p><span class="math display">\[\boxed{y_{\tau,t}^{*} = r_{\tau,t}^{*} +
+E_{t}\left( \pi_{\tau} \right) + TP_{\tau,t}^{*}}\]</span></p>
+<p>Here y* is the neutral nominal yield at maturity τ; r* is the
+corresponding neutral real rate over that horizon; E(π) is expected
+inflation over the horizon; and TP* is an equilibrium term premium. The
+concept is not directly observable and should not be interpreted as a
+precise policy target. Rather, it is a diagnostic benchmark: if market
+yields across important maturities move materially above their neutral
+configuration, financial restraint can increase even if the policy rate
+is unchanged.</p>
+<p>This does not mean the Fed should target every point on the Treasury
+curve. It means policymakers should recognize that monetary restraint is
+transmitted through the curve as a whole.</p>
+<h1 id="three-monetary-levers-not-one">Three Monetary Levers, Not
+One</h1>
+<p><span class="math display">\[\boxed{\text{Policy Rate} + \text{Yield
+Curve} + \text{Balance Sheet} \rightarrow \text{Financial Conditions}
+\rightarrow \text{Aggregate Demand}}\]</span></p>
+<p>The federal funds rate directly anchors the very short end and
+influences expectations of future short rates. Long-term yields
+influence mortgages, corporate borrowing, capital investment, equity
+discount rates, commercial real estate, and government financing.</p>
+<p>The Fed’s balance sheet operates through a distinct but related
+channel. Asset purchases can increase reserves and remove duration risk
+from private portfolios, reducing term premiums and easing financial
+conditions. Balance-sheet reduction works in the opposite direction by
+increasing the amount of duration that the private sector must absorb.
+Its effect on 'liquidity,' however, should be stated carefully: changes
+in Fed assets, reserves, Treasury cash balances, currency, repo
+facilities, and other liabilities jointly determine reserve conditions,
+so a smaller balance sheet does not translate one-for-one into a
+mechanically equal reduction in broad money or market liquidity.</p>
+<p>Federal Reserve staff estimated (Crawley et al., 2022) that a
+one-time permanent reduction in Fed holdings of 10-year-equivalent
+Treasury securities equal to 1% of nominal GDP raises the 10-year term
+premium by about 10 basis points in their model. The same tightening
+could be generated, in that model, by raising the average expected
+federal-funds-rate path over the coming decade by about 10 basis points.
+The authors stress that this is a model-dependent rule of thumb, not a
+fixed conversion.</p>
+<p>In a broader scenario, the same 2022 FEDS Note estimated (Crawley et
+al., 2022) that reducing the balance sheet by roughly $2.5 trillion
+relative to a no-runoff counterfactual was approximately equivalent to a
+little more than 50 basis points of sustained policy-rate tightening.
+This provides useful quantitative evidence for treating the balance
+sheet and long-term rates as part of the overall monetary stance.</p>
+<p><span class="math display">\[\boxed{\Delta B_{Fed} &lt; 0 \Rightarrow
+TP \uparrow \Rightarrow y_{long} \uparrow \Rightarrow \text{Financial
+Conditions Tighten}}\]</span></p>
+<h1
+id="from-rates-and-liquidity-to-growth-employment-and-inflation">From
+Rates and Liquidity to Growth, Employment, and Inflation</h1>
+<p>The transmission mechanism can be represented more completely as
+follows:</p>
+<p><span class="math display">\[r_{short} \uparrow ,\quad r_{long}
+\uparrow ,\quad B_{Fed} \downarrow\]</span></p>
+<p><span class="math display">\[\Downarrow \quad\text{Financial
+Conditions Tighten}\quad \Downarrow\]</span></p>
+<p><span class="math display">\[\text{Credit Growth and
+Interest-Sensitive Spending} \downarrow \Rightarrow C + I \downarrow
+\Rightarrow AD \downarrow\]</span></p>
+<p><span class="math display">\[\Rightarrow \text{GDP Growth} \downarrow
+\Rightarrow \text{Labor Demand} \downarrow \Rightarrow \text{Wage/Price
+Pressure} \downarrow \Rightarrow \pi \downarrow\]</span></p>
+<p>In this chain, C denotes household consumption, I denotes business
+and residential investment, and AD denotes aggregate demand. Higher
+short rates affect floating-rate borrowing, bank funding, money-market
+returns, and near-term spending incentives. Higher long rates raise
+mortgage and corporate financing costs and increase discount rates
+applied to long-lived assets and investment projects. Balance-sheet
+policy can affect term premiums, reserve conditions, and the quantity of
+duration held by the public.</p>
+<p>There are important lags and nonlinearities in every arrow. The Fed
+also does not mechanically control broad money supply through the size
+of its balance sheet. Commercial-bank lending creates deposits;
+households and firms determine desired money balances; Treasury
+operations shift reserves and deposits; and velocity changes the amount
+of nominal spending supported by a given stock of money.</p>
+<p>A reduced-form representation is:</p>
+<p><span class="math display">\[\Delta Y = f\left( \Delta r_{s},\Delta
+r_{l},\Delta B_{Fed},\Delta Credit,\Delta M,\Delta V,\Delta Z
+\right)\]</span></p>
+<p>Here ΔY is the change in real output or growth; Δr_s and Δr_l are
+changes in short- and long-term real or nominal rates as appropriate;
+ΔB_Fed is the change in the Fed balance sheet or relevant securities
+holdings; ΔCredit captures changes in the price and availability of
+credit; ΔM is money growth; ΔV is the change in money velocity; and ΔZ
+represents other shocks, including fiscal policy, energy prices,
+productivity, exchange rates, and geopolitical events. The equation is
+deliberately reduced-form: the coefficients are state-dependent and
+cannot be treated as stable mechanical multipliers.</p>
+<p>The monetary identity MV = PY provides another useful organizing
+framework for understanding why monetary conditions cannot be inferred
+from the quantity of money alone.</p>
+<p><span class="math display">\[\boxed{MV = PY}\]</span></p>
+<p>In this identity, M is broad money (for example, M2); V is money
+velocity, defined as nominal spending per unit of money; P is the
+general price level; and Y is real output. The product PY is therefore
+nominal GDP. In growth-rate form, the identity can be written
+approximately as:</p>
+<p><span class="math display">\[\Delta\ln M + \Delta\ln V \approx
+\Delta\ln P + \Delta\ln Y\]</span></p>
+<p>or, more intuitively, money growth plus velocity growth is
+approximately equal to inflation plus real-output growth. This is an
+accounting identity, not by itself a behavioral theory of inflation. It
+becomes economically useful when combined with an explanation of how
+interest rates, credit conditions, portfolio choices, and confidence
+affect M, V, P, and Y.</p>
+<p><strong>First, the Fed's balance sheet is not the same thing as broad
+money.</strong> When the Federal Reserve purchases a Treasury or agency
+security, it normally creates central-bank reserves. Those reserves are
+settlement balances of depository institutions; they do not mechanically
+become an equal amount of household or corporate spending, nor do they
+generate a fixed multiple of bank lending or deposits.</p>
+<p><span class="math display">\[B_{Fed} \uparrow \Rightarrow \text{Bank
+Reserves} \uparrow \mspace{6mu} \Rightarrow
+\not{}\mspace{6mu}\text{Proportional }M \uparrow \text{ or }PY
+\uparrow\]</span></p>
+<p>Broad money depends importantly on commercial-bank lending and
+deposit creation, but also on borrowers' willingness to borrow, banks'
+willingness and capacity to lend, Treasury operations, and household and
+corporate portfolio decisions. Thus an increase in central-bank
+liquidity can ease financial conditions without producing a proportional
+increase in M2, nominal GDP, or inflation.</p>
+<p><strong>Second, velocity is an essential part of the transmission
+mechanism.</strong> Even if broad money is unchanged, nominal spending
+can weaken if households and firms choose to hold larger money balances
+relative to expenditures, postpone purchases, or reduce investment. In
+the identity, this appears as lower measured velocity.</p>
+<p><span class="math display">\[M\text{ unchanged},\quad V \downarrow
+\Rightarrow PY \downarrow\]</span></p>
+<p>For example, if broad money grows by 5%, velocity falls by 3%, and
+real output grows by 2%, the arithmetic of the identity is approximately
+consistent with zero inflation:</p>
+<p><span class="math display">\[5\% - 3\% \approx \pi + 2\% \Rightarrow
+\pi \approx 0\%\]</span></p>
+<p>The example is intentionally simplified; it illustrates why money
+growth alone does not determine inflation. A decline in velocity can
+offset part or all of the spending impulse associated with a larger
+money stock.</p>
+<p><strong>Third, higher long-term rates can tighten monetary conditions
+even before measured M contracts.</strong> Suppose the 10-year Treasury
+yield rises materially while M2 remains roughly unchanged. Mortgage
+rates and corporate bond yields can rise, the discount rate applied to
+investment projects can increase, and equity and real-estate valuations
+can fall. Households may borrow less and consume less; firms may
+postpone capital expenditure; lenders may become more selective; and
+asset-related wealth effects may weaken.</p>
+<p><span class="math display">\[r_{long} \uparrow \Rightarrow
+\text{Credit Demand} \downarrow ,\ I \downarrow ,\ C \downarrow ,\
+\text{Asset Values} \downarrow \Rightarrow PY \downarrow\]</span></p>
+<p>In the MV = PY framework, weaker nominal spending with an initially
+unchanged money stock is reflected in a decline in V. Over time, weaker
+credit creation may also slow M itself. This is precisely why the stance
+of monetary policy cannot be read from M2 or the Fed balance sheet in
+isolation.</p>
+<p><strong>A necessary caution is that velocity is not an independent
+policy lever.</strong> Because V is defined as PY/M, observed velocity
+partly summarizes the outcome of spending behavior rather than
+independently causing it. Interest rates, credit availability,
+confidence, wealth, payment technology, portfolio preferences, and
+economic activity jointly influence spending relative to money balances.
+The causal story therefore runs through those behavioral and financial
+channels, with V serving as a compact summary of their effect on the use
+of money.</p>
+<p>The broader implication for monetary neutrality is important: the Fed
+does not have to shrink broad money directly for monetary conditions to
+become more restrictive. A rise in long-term rates can reduce the
+willingness of households and firms to put money and credit to work.
+Conversely, a larger central-bank balance sheet does not guarantee
+strong nominal demand if credit demand is weak or money velocity
+falls.</p>
+<h1
+id="september-2026-the-bond-market-has-already-tightened-policy">September
+2026: The Bond Market Has Already Tightened Policy</h1>
+<p>This framework is particularly relevant ahead of the September 15–16,
+2026 FOMC meeting. Since July, the long end of the Treasury curve has
+repriced sharply. The July average 10-year Treasury yield was
+approximately 4.60%, while the yield was around 4.95% on September 10;
+the 30-year yield was roughly 5.36%. Depending on the specific July
+observation used, the increase from levels around 4.45% is even
+larger.</p>
+<p>The movement is economically significant. A 35–50 basis-point
+increase in long-term rates is not equivalent in every respect to a
+35–50 basis-point increase in the federal funds rate. The duration,
+persistence, source of the move, credit-spread response, and effect on
+real rates all matter. But it should not be treated as irrelevant simply
+because the FOMC did not initiate it.</p>
+<p>Mortgage rates, corporate discount rates, and the cost of
+long-duration financing respond to the market curve, not merely to the
+overnight policy rate. The bond market has therefore delivered a
+meaningful degree of de facto monetary tightening ahead of the September
+meeting.</p>
+<h1 id="but-the-reason-long-rates-rose-matters">But the Reason Long
+Rates Rose Matters</h1>
+<p><span class="math display">\[\Delta y_{10} = \Delta E\left( r_{short}
+\right) + \Delta E(\pi) + \Delta TP\]</span></p>
+<p>If yields rise because stronger expected growth raises the expected
+path of future short rates, the movement provides restraint but also
+signals economic strength. If yields rise because Treasury supply or
+fiscal risk raises the term premium, the movement is more directly a
+tightening of financial conditions.</p>
+<p>If yields rise because oil prices surge and inflation expectations
+deteriorate, however, the higher yield tightens financial conditions
+while simultaneously telling the Fed that inflation risk has increased.
+The same market move can therefore carry two opposing policy
+implications.</p>
+<p><span class="math display">\[\boxed{\underset{\text{More
+Market-Imposed Restraint}}{\underbrace{y_{long}
+\uparrow}}\quad\quad\text{versus}\quad\quad\underset{\text{Greater
+Inflation Risk}}{\underbrace{\pi^{e} \uparrow}}}\]</span></p>
+<p>This is the central policy tension going into September. Higher
+long-term rates are already doing part of the Fed’s work through
+financial conditions, but the information embedded in those rates may
+simultaneously signal that the inflation problem has become more
+serious.</p>
+<h1 id="a-better-way-to-think-about-neutrality">A Better Way to Think
+About Neutrality</h1>
+<p>The neutral rate should therefore not disappear from monetary
+economics. It should be expanded. Instead of asking only whether the
+federal funds rate is above or below r*, policymakers should also ask
+where the entire yield curve lies relative to a neutral configuration;
+what portion of long yields reflects expected policy, inflation
+expectations, and term premium; what the Fed balance sheet is doing to
+duration and reserve conditions; and what the combined configuration is
+doing to credit and aggregate demand.</p>
+<p><span class="math display">\[\boxed{\text{Required Fed Action} =
+f\left( \text{Inflation Gap},\text{Employment Gap},\text{Existing
+Financial Restraint},\text{Inflation Expectations},\text{Supply Shocks}
+\right)}\]</span></p>
+<p>The higher the restraint already being imposed through long-term
+rates and credit conditions, the less incremental tightening may be
+required from the federal funds rate, all else equal. Those last four
+words are essential.</p>
+<h1
+id="a-numerical-illustration-how-market-tightening-could-change-the-fed-decision">A
+Numerical Illustration: How Market Tightening Could Change the Fed
+Decision</h1>
+<p>Consider a deliberately simplified example. Suppose that, before the
+rise in long rates, the FOMC’s assessment implied that an additional
+25-basis-point increase in the federal funds rate was needed to generate
+sufficient restraint. Now suppose the 10-year Treasury yield rises 50
+basis points and the move persists.</p>
+<p>It would be incorrect to assume a one-for-one equivalence and simply
+subtract 50 basis points from the policy rate. Instead, policymakers
+could translate the market move into an estimated equivalent tightening
+in a financial-conditions or macroeconomic model. For illustration,
+suppose only 40% of the 50-basis-point long-rate increase is judged to
+represent persistent real-rate/term-premium tightening relevant to
+demand, while the rest reflects inflation compensation or transitory
+factors:</p>
+<p><span class="math display">\[50\text{ bp} \times 40\% = 20\text{ bp
+of effective persistent long-rate tightening}\]</span></p>
+<p>Suppose further that credit spreads and mortgage rates have tightened
+enough to add an estimated 10 basis points of policy-rate-equivalent
+restraint, while balance-sheet/reserve conditions are judged neutral at
+the margin:</p>
+<p><span class="math display">\[\text{Market-Imposed Equivalent
+Tightening} = 20 + 10 = 30\text{ bp}\]</span></p>
+<p>Against an initial judgment that 25 basis points of additional
+restraint was required:</p>
+<p><span class="math display">\[\text{Incremental Fed Tightening Needed}
+= 25 - 30 = - 5\text{ bp}\]</span></p>
+<p>The policy implication would change from 'raise 25 basis points' to
+'hold the policy rate and observe the transmission of existing
+restraint.' This is an illustration, not an empirical estimate of the
+current September decision. The conversion coefficients must come from a
+defensible financial-conditions or structural model, and the Fed must
+separately assess whether the rise in yields reflects worsening
+inflation expectations.</p>
+<p>If, alternatively, half of the long-rate increase reflected a
+persistent rise in inflation expectations, the policy conclusion could
+reverse. That is why the decomposition of the yield move is as important
+as its magnitude.</p>
+<h1 id="conclusion-and-required-policy-action">Conclusion and Required
+Policy Action</h1>
+<p>Monetary policy is often summarized by one number: the federal funds
+rate. The economy is not. Households, corporations, financial markets,
+and governments operate across an entire structure of interest rates,
+credit spreads, asset prices, liquidity conditions, and money
+creation.</p>
+<p>A modern concept of monetary neutrality should therefore move beyond
+a single overnight rate.</p>
+<p><span class="math display">\[\boxed{\text{The Fed sets the short
+rate. The economy lives on the yield curve.}}\]</span></p>
+<p>The required policy action follows directly from this framework. At
+the September meeting, the FOMC should explicitly incorporate the
+material rise in long-term yields and broader credit conditions into its
+estimate of existing monetary restraint before deciding that another
+increase in the federal funds rate is necessary.</p>
+<p>Given the substantial market-driven rise in long rates since July,
+the burden of proof for an additional September rate increase should be
+higher than it was at the previous meeting. If the increase in long
+yields is primarily a persistent rise in real yields or term premium,
+and credit conditions remain restrictive, a policy hold would be
+economically defensible because markets have already supplied part of
+the required tightening.</p>
+<p>If, however, the rise is primarily the consequence of unanchored
+inflation expectations, a persistent energy shock, or evidence that
+underlying inflation is accelerating, the Fed should not treat higher
+long rates as a substitute for policy action. In that case, the
+inflation signal can outweigh the financial-conditions restraint.</p>
+<p>The practical recommendation is therefore conditional but clear:
+measure the total effective restraint first; decompose the rise in long
+yields second; then set the short rate. The federal funds rate should be
+the residual policy instrument needed after accounting for the restraint
+already delivered by the yield curve, credit conditions, and the
+balance-sheet environment.</p>
+<h1 id="selected-references">Selected References</h1>
+<p>Crawley, Edmund, Etienne Gagnon, James Hebden, and James Trevino
+(2022), “Substitutability between Balance Sheet Reductions and Policy
+Rate Hikes: Some Illustrations and a Discussion,” FEDS Notes, Board of
+Governors of the Federal Reserve System, June 3, 2022. DOI:
+10.17016/2380-7172.3147.</p>
+<p>Doniger, Cynthia, James Hebden, Luke Pettit, and Arsenios Skaperdas
+(2019), “Substitutability of Monetary Policy Instruments,” FEDS Notes,
+Board of Governors of the Federal Reserve System, July 19, 2019.</p>
+<p>Eyal, Benjamin, Dave Na, and Arsenios Skaperdas (2026), “A
+Decomposition of Balance Sheet Reduction,” FEDS Notes, Board of
+Governors of the Federal Reserve System, February 2, 2026.</p>
+<p>Anderson, Alyssa G., Alessandro Barbarino, Anthony M. Diercks, and
+Stephen Miran (2026), “A User’s Guide to Reducing the Federal Reserve’s
+Balance Sheet,” Finance and Economics Discussion Series 2026-019, Board
+of Governors of the Federal Reserve System.</p>
+<p>Board of Governors of the Federal Reserve System, H.4.1, “Factors
+Affecting Reserve Balances of Depository Institutions and Condition
+Statement of Federal Reserve Banks,” September 10, 2026.</p>
+<p>Board of Governors of the Federal Reserve System, “An Estimate of the
+Long-Term Neutral Rate of Interest,” FEDS Notes, September 5, 2018.</p>
+<p>Board of Governors of the Federal Reserve System, “Why Have
+Far-Forward Nominal Treasury Rates Increased So Much in the Past Few
+Years?” FEDS Notes, February 12, 2026.</p>
+<p>Federal Reserve Economic Data (FRED), U.S. Treasury constant-maturity
+interest-rate series.</p>
+
+  </article>
+
+  <div class="note">
+    <strong>Note:</strong> The numerical policy example in this article is illustrative rather than an empirical
+    estimate of the September 2026 FOMC decision. Policy-rate equivalents depend on the model,
+    persistence of financial conditions, and the economic source of the yield movement.
+  </div>
+
+  <footer>
+    © Charlie Lu. Published as part of the author materials supporting
+    <em>Principles and Practices of Model Risk Management</em>.
+  </footer>
+</div>
+</body>
+</html>
