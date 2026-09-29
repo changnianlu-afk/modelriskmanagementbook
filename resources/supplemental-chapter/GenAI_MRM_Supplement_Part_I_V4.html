@@ -166,10 +166,19 @@
       margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
     }
+    mjx-container[display="true"] { overflow-x: auto; overflow-y: hidden; margin: 1.2em 0 !important; }
   </style>
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="/usr/share/javascript/mathjax/MathJax.js"
-  type="text/javascript"></script>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']]
+      },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+    };
+  </script>
+  <script id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
 <header id="title-block-header">
@@ -327,8 +336,7 @@ predict tokens well. Alignment, fine-tuning, retrieval, system
 instructions, guardrails, and human oversight are layered on top to make
 the system useful and safer for particular purposes.</p>
 <p>A fluent answer is therefore not equivalent to a correct answer:</p>
-<p><span class="math display">\[P\left( \text{linguistically plausible}
-\right) \neq P\left( \text{factually correct} \right).\]</span></p>
+<p><span class="math display">\[P(\text{linguistically plausible}) \neq P(\text{factually correct}).\]</span></p>
 <p>This simple inequality captures one of the most important differences
 between GenAI output risk and traditional model error.</p>
 <h2 id="statistical-models-machine-learning-and-genai">1.3 Statistical
@@ -556,8 +564,7 @@ prompts; RAG components; embedding models; external tools; permissions;
 guardrails; user population; output consumers; and downstream
 decisions.</p>
 <p>A useful decomposition is</p>
-<p><span class="math display">\[R_{system} \neq
-\sum_{i}^{}R_{component,i}.\]</span></p>
+<p><span class="math display">\[R_{\mathrm{system}} \neq \sum_i R_{\mathrm{component},i}.\]</span></p>
 <p>The inequality emphasizes interaction and dependency risk, not merely
 the sum of component risks. Individually acceptable components can
 create an unacceptable system when combined because prompts affect
@@ -920,8 +927,7 @@ expressed as</p>
 <p><span class="math display">\[P_{train}(X) \neq
 P_{production}(X).\]</span></p>
 <p>GenAI adds an important evaluation mismatch:</p>
-<p><span class="math display">\[P_{benchmark}(X) \neq P_{actual\ user\
-prompts}(X).\]</span></p>
+<p><span class="math display">\[P_{\mathrm{benchmark}}(X) \neq P_{\mathrm{actual\ user\ prompts}}(X).\]</span></p>
 <p>A model may perform well on polished benchmark questions but poorly
 on ambiguous, multilingual, abbreviated, adversarial, or domain-specific
 production prompts. Representativeness should therefore be assessed at
@@ -936,9 +942,7 @@ and RAG controls</h2>
 information can enter the model’s effective decision context
 <strong>after validation and immediately before generation</strong>.</p>
 <p>A simplified RAG process is</p>
-<p><span class="math display">\[q \rightarrow E(q) \rightarrow
-Retrieve(D,K) \rightarrow C_{q} \rightarrow LLM\left( q,C_{q} \right)
-\rightarrow y.\]</span></p>
+<p><span class="math display">\[q \rightarrow E(q) \rightarrow \operatorname{Retrieve}(D,k) \rightarrow C(q) \rightarrow \operatorname{LLM}(q,C(q)) \rightarrow y.\]</span></p>>
 <p>In this flow, q is the user query; E(q) is its embedding; D is the
 authorized document corpus; k is the number of retrieved items;
 Retrieve(D,k) selects the top-ranked relevant chunks; C(q) is the
@@ -1000,8 +1004,7 @@ relies heavily on specific training examples.
 <strong>Generalization</strong> occurs when learned structure supports
 correct behavior on materially new examples.</p>
 <p>A simple conceptual test is:</p>
-<p><span class="math display">\[Generalization\ Gap = Performance_{train
-- like} - Performance_{novel}.\]</span></p>
+<p><span class="math display">\[\mathrm{Generalization\ Gap}=\mathrm{Performance}_{\mathrm{train-like}}-\mathrm{Performance}_{\mathrm{novel}}.\]</span></p>
 <p>A large gap can indicate overfitting, contamination, or insufficient
 generalization, although interpretation requires care because task
 difficulty may also differ.</p>
