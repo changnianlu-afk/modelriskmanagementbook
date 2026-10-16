@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>GenAI Model Risk Management — Part III</title><meta content="Generative AI Model Risk Management, Part III: ongoing monitoring, change management, governance and integrated control." name="description"/><style>
+:root{--ink:#243449;--soft:#536477;--blue:#255b86;--pale:#eff5fa;--line:#d5e0ea;--paper:#fff;--canvas:#f4f7fa}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--canvas);color:var(--ink);font:16px/1.72 Georgia,'Times New Roman',serif}
+.page{max-width:1450px;margin:auto;display:grid;grid-template-columns:290px minmax(0,1fr);gap:28px;padding:28px 24px 80px}
+nav{position:sticky;top:18px;align-self:start;max-height:calc(100vh - 36px);overflow-y:auto;border:1px solid var(--line);border-radius:13px;background:#fff;padding:20px;font:13px/1.5 system-ui,sans-serif}
+nav strong{display:block;font-size:15px;color:var(--blue);margin-bottom:14px}nav a{display:block;color:#374c62;text-decoration:none;padding:7px 8px;border-radius:6px}nav a:hover{background:var(--pale);color:#124d7a}nav a.sub{padding-left:20px;font-size:12px}
+article{min-width:0;background:var(--paper);box-shadow:0 3px 26px #213e5810;border:1px solid var(--line);border-radius:14px;padding:50px clamp(22px,5.5vw,76px) 72px}
+h1,h2,h3{font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif;line-height:1.27;color:#1d527a;scroll-margin-top:32px}h1{font-size:26px;margin:2.2em 0 .7em;padding-bottom:12px;border-bottom:2px solid var(--line)}h2{font-size:20px;margin:2em 0 .65em}h3{font-size:17px;margin:1.5em 0 .6em}
+article>h1:first-of-type{margin-top:0}p{margin:0 0 1.05em}ul,ol{padding-left:1.55em;margin:0 0 1.2em}li{padding-left:3px;margin-bottom:4px}a{color:#1e5d91}strong{color:#1e405e}
+table{border-collapse:collapse;width:100%;font:13px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;margin:20px 0 25px;table-layout:auto}th,td{border:1px solid #bccbd7;text-align:left;vertical-align:top;padding:9px 11px;overflow-wrap:anywhere}thead th{background:#e5eff6;color:#163b58}tbody tr:nth-child(even){background:#fafcfe}
+.math.display{display:block;overflow-x:auto;margin:1.45em 0;text-align:center;padding:6px 2px}mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;max-width:100%;padding:4px 0}blockquote{border-left:4px solid var(--blue);background:var(--pale);padding:14px 18px;margin:1.5em 0}
+.topline{font:700 11px system-ui,sans-serif;letter-spacing:.11em;text-transform:uppercase;color:#67849a;margin-bottom:12px}.reading-info{font:13px system-ui,sans-serif;color:#6b7b89;margin-bottom:24px}.footer{font:12px/1.5 system-ui,sans-serif;color:#758392;border-top:1px solid var(--line);padding-top:17px;margin-top:45px}
+@media(max-width:920px){.page{display:block;padding:0}nav{position:relative;max-height:240px;margin:12px;border-radius:9px}article{border-radius:0;border:0;padding:30px 22px}table{font-size:12px}th,td{padding:6px}}
+@media print{body{background:#fff}.page{display:block;padding:0}nav{display:none}article{box-shadow:none;border:0;padding:0}h1,h2,h3{break-after:avoid}tr{break-inside:avoid}@page{margin:17mm}}
+</style><script>window.MathJax={tex:{inlineMath:[["\\(","\\)"],["$","$"]],displayMath:[["\\[","\\]"]]},options:{skipHtmlTags:["script","noscript","style","textarea","pre","code"]}};</script><script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script></head><body><div class="page"><nav aria-label="Part III contents"><strong>Part III · Contents</strong><a class="main" href="#part-iii-overview">Part III Overview</a><a class="main" href="#ongoing-performance-monitoring">6. Ongoing Performance
+Monitoring</a><a class="sub" href="#why-genai-monitoring-differs-from-traditional-model-monitoring">6.1
+Why GenAI monitoring differs from traditional model monitoring</a><a class="sub" href="#monitoring-against-the-approved-operating-scope">6.2 Monitoring
+against the approved operating scope</a><a class="sub" href="#components-based-monitoring-architecture">6.3 Components based
+monitoring architecture</a><a class="sub" href="#sampling-automated-monitoring-plus-risk-based-human-review">6.4
+Sampling: automated monitoring plus risk-based human review</a><a class="sub" href="#thresholds-and-traffic-light-escalation">6.5 Thresholds and
+traffic-light escalation</a><a class="sub" href="#monitoring-factuality-and-grounding">6.6 Monitoring factuality
+and grounding</a><a class="sub" href="#monitoring-rag-systems">6.7 Monitoring RAG systems</a><a class="sub" href="#drift-in-genai-systems">6.8 Drift in GenAI systems</a><a class="sub" href="#section"></a><a class="sub" href="#incident-and-near-miss-monitoring">6.9 Incident and near-miss
+monitoring</a><a class="sub" href="#monitoring-frequency">6.10 Monitoring frequency</a><a class="main" href="#dynamic-evolution-change-control-and-agentic-ai">7. Dynamic
+Evolution, Change Control, and Agentic AI</a><a class="sub" href="#genai-systems-can-change-without-retraining">7.1 GenAI systems
+can change without retraining</a><a class="sub" href="#materiality-of-change">7.2 Materiality of change</a><a class="sub" href="#versioning-and-reproducibility">7.3 Versioning and
+reproducibility</a><a class="sub" href="#vendor-model-updates-and-third-party-opacity">7.4 Vendor model
+updates and third-party opacity</a><a class="sub" href="#agentic-ai-changes-the-loss-mechanism">7.5 Agentic AI changes
+the loss mechanism</a><a class="sub" href="#dynamic-improvement-and-recursive-self-improvement-rsi">7.6
+Dynamic improvement and recursive self-improvement (RSI)</a><a class="sub" href="#revalidation-triggers">7.7 Revalidation triggers</a><a class="main" href="#governance-and-control">8. Governance and Control</a><a class="sub" href="#governance-objective">8.1 Governance objective</a><a class="sub" href="#genai-policy-standards-and-procedures">8.2 GenAI policy,
+standards, and procedures</a><a class="sub" href="#inventory-from-model-inventory-to-ai-system-inventory">8.3
+Inventory: from model inventory to AI-system inventory</a><a class="sub" href="#risk-tiering">8.4 Risk tiering</a><a class="sub" href="#three-lines-of-defense-and-effective-challenge">8.5 Three lines
+of defense and effective challenge</a><a class="sub" href="#risk-appetite-and-use-restrictions">8.6 Risk appetite and use
+restrictions</a><a class="sub" href="#human-oversight-meaningful-rather-than-ceremonial">8.7 Human
+oversight: meaningful rather than ceremonial</a><a class="sub" href="#third-party-and-foundation-model-governance">8.8 Third-party and
+foundation-model governance</a><a class="sub" href="#documentation-and-auditability">8.9 Documentation and
+auditability</a><a class="sub" href="#issue-management">8.10 Issue management</a><a class="main" href="#integrated-genai-mrm-framework">9. Integrated GenAI MRM
+Framework</a><a class="sub" href="#lifecycle-view">9.1 Lifecycle view</a><a class="sub" href="#the-control-loop">9.2 The control loop</a><a class="sub" href="#mapping-risks-to-controls-and-evidence">9.3 Mapping risks to
+controls and evidence</a><a class="sub" href="#a-practical-governance-dashboard">9.4 A practical governance
+dashboard</a><a class="main" href="#integrated-case-study-bankco-policy-and-credit-assistant">10.
+Integrated Case Study — BankCo Policy and Credit Assistant</a><a class="sub" href="#business-proposal">10.1 Business proposal</a><a class="sub" href="#system-architecture">10.2 System architecture</a><a class="sub" href="#initial-risk-assessment">10.3 Initial risk assessment</a><a class="sub" href="#validation-plan">10.4 Validation plan</a><a class="sub" href="#monitoring-design">10.5 Monitoring design</a><a class="sub" href="#a-material-change">10.6 A material change</a><a class="sub" href="#incident-scenario">10.7 Incident scenario</a><a class="sub" href="#what-the-case-illustrates">10.8 What the case illustrates</a><a class="main" href="#part-iii-summary">Part III Summary</a><a class="main" href="#part-iii-references-and-further-reading">Part III References and
+Further Reading</a></nav><article><div class="topline">Supplemental Chapter · Model Risk Management</div><div class="reading-info">Part III — Ongoing Monitoring, Change Management, Governance, and Integrated Control · Version 3</div><p><em>Supplemental Chapter to Principles and Practices of Model Risk
+Management</em></p><p><strong>Part III — Ongoing Monitoring, Change Management, Governance,
+and Integrated Control</strong></p><h1 id="part-iii-overview">Part III Overview</h1><p>Parts I and II discussed the GenAI system boundary, data and
+knowledge risks, development, and independent validation. Part III turns
+to what happens after a system is approved for production: ongoing
+performance monitoring, change management, governance, and integrated
+control. This distinction matters. A GenAI application may change
+substantially even when the underlying foundation model is not
+retrained. Changes to prompts, retrieval sources, vendor models, tools,
+guardrails, and users can all affect its behavior. MRM must therefore
+monitor the deployed system as a whole, including changes to its
+components and the resulting business risk.</p><p>Part III covers four related areas:</p><ul>
+<li><p>ongoing monitoring of performance, business outcomes, and control
+effectiveness after production approval;</p></li>
+<li><p>change management for the evolving GenAI system, including
+agentic AI and controlled self-improvement;</p></li>
+<li><p>governance, ownership, risk appetite, escalation, and third-party
+dependencies; and</p></li>
+<li><p>an integrated MRM framework, supported by policy, standards,
+procedures, and a banking case study.</p></li>
+</ul><table>
+<colgroup>
+<col style="width: 100%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Core proposition — Dynamic-system principle.</strong>
+Initial validation establishes an approved operating envelope. Ongoing
+monitoring asks whether the deployed system remains inside that
+envelope, whether its risk has changed, and whether accumulated changes
+require partial or full revalidation.</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table><h1 id="ongoing-performance-monitoring">6. Ongoing Performance
+Monitoring</h1><h2 id="why-genai-monitoring-differs-from-traditional-model-monitoring">6.1
+Why GenAI monitoring differs from traditional model monitoring</h2><p>Traditional model monitoring assesses stability of inputs and
+outputs, calibration, discriminatory power, back-testing results,
+overrides, and realized outcomes, as applicable. These tests remain
+useful. GenAI creates additional difficulties. Its responses are often
+non-deterministic; tasks can vary widely; the correct answer may be hard
+to establish; and the distribution of prompts changes with user
+behavior. RAG adds an evolving knowledge source. Agentic applications
+introduce the further risk that an incorrect response leads to an
+external action. A monitoring program that looks only at a model-level
+accuracy measure will miss much of this risk.</p><p>In practice, management needs several measures rather than one
+overall score. These measures should cover output quality, factuality,
+grounding, robustness, safety, privacy where relevant, operational
+reliability, and control effectiveness. The selection and importance of
+each measure depend on the approved use case.</p><p><span class="math inline">\(M_{t} = \left(
+Q_{t},F_{t},G_{t},R_{t},S_{t},P_{t},O_{t},C_{t} \right)\)</span>
+(6.1)</p><p>where Q denotes task quality, F factuality, G grounding, R
+robustness, S safety/security, P privacy/fairness where relevant, O
+operational performance, and C control effectiveness. The exact vector
+should be tailored to the use case.</p><h2 id="monitoring-against-the-approved-operating-scope">6.2 Monitoring
+against the approved operating scope</h2><p>Part II represented the deployed system by its state S_t and the
+approved operating scope by 𝒱. These concepts are useful for monitoring.
+Although the model name may remain the same, its effective behavior can
+change when the surrounding system changes. Monitoring should establish
+whether the current configuration and actual use remain consistent with
+the conditions under which validation and approval were granted.</p><p><span class="math inline">\(S_{t} = \left(
+W_{t},D_{t},P_{t},R_{t},T_{t},G_{t},U_{t} \right)\)</span> (6.2)</p><p><span class="math inline">\(S_{t}\mathcal{\in V}\quad\text{required
+for ordinary approved operation}\)</span> (6.3)</p><p>The monitoring process must cover outcomes and changes in system
+configuration. Even if the model weights W are unchanged, a material
+change in RAG sources R, tool permissions T, guardrails G, or users U
+may move the system beyond its approved scope. Such a change calls for
+an impact assessment and, where warranted, targeted or full
+revalidation.</p><h2 id="components-based-monitoring-architecture">6.3 Components based
+monitoring architecture</h2><table>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Monitoring layer</strong></th>
+<th><strong>Illustrative measures</strong></th>
+<th><strong>Primary question</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Input / use</td>
+<td>Prompt categories, user groups, language, task mix, prompt length,
+prohibited-use attempts</td>
+<td>Is actual use consistent with approved use?</td>
+</tr>
+<tr class="even">
+<td>Retrieval / context</td>
+<td>Recall, precision, stale-document rate, access-control exceptions,
+citation coverage</td>
+<td>Is the system receiving appropriate and authorized context?</td>
+</tr>
+<tr class="odd">
+<td>Model output</td>
+<td>Task success, factuality, grounding, abstention, consistency,
+harmful-output rate</td>
+<td>Does output quality remain acceptable?</td>
+</tr>
+<tr class="even">
+<td>Agent / tool</td>
+<td>Tool-call success, denied actions, privilege exceptions, reversals,
+human approvals</td>
+<td>Are actions bounded and controlled?</td>
+</tr>
+<tr class="odd">
+<td>Security</td>
+<td>Injection attempts, jailbreak success, data leakage, anomalous tool
+chains</td>
+<td>Are adversarial risks changing?</td>
+</tr>
+<tr class="even">
+<td>Operations</td>
+<td>Latency, failures, token use, cost, fallback frequency, vendor
+incidents</td>
+<td>Is the system operationally reliable?</td>
+</tr>
+<tr class="odd">
+<td>Human / business outcome</td>
+<td>Override, complaint, escalation, downstream error, realized loss or
+near miss</td>
+<td>What are the real-world consequences?</td>
+</tr>
+</tbody>
+</table><p id="a-components-based-framework-identifies-what-to-observe-it-does-not-by-itself-constitute-a-monitoring-program.-for-each-production-use-case-the-first-line-should-maintain-a-written-monitoring-plan-approved-under-the-institutions-mrm-standards.-the-plan-should-identify-the-monitored-population-the-critical-tasks-and-failure-modes-the-baseline-established-at-validation-the-metrics-and-limits-the-data-and-sampling-methods-the-frequency-of-review-and-named-owners-for-investigation-and-remediation.-the-monitoring-scope-must-include-each-material-component-of-the-deployed-system-not-just-the-foundation-model.-a-practical-plan-combines-four-sources-of-evidence.-first-automated-production-logs-capture-use-system-versions-retrieval-and-tool-activity-failed-controls-and-operational-exceptions.-second-a-risk-based-sample-of-outputs-is-reviewed-against-authoritative-sources-and-business-requirements.-third-event-driven-tests-address-vendor-releases-changes-in-rag-content-or-permissions-new-user-groups-and-significant-incidents.-fourth-business-outcome-reviews-examine-complaints-corrections-overrides-downstream-decisions-losses-and-near-misses.-the-first-line-should-reconcile-these-sources-rather-than-report-them-as-unrelated-dashboards.-each-metric-needs-a-precise-definition-numerator-denominator-sampling-unit-exclusions-baseline-limit-observation-window-and-data-owner.-for-example-the-material-unsupported-claim-rate-is-the-number-of-material-claims-not-supported-by-approved-evidence-divided-by-the-number-of-material-claims-reviewed.-its-trend-is-assessed-separately-for-major-tasks-and-user-groups.-a-serious-unauthorized-tool-action-by-contrast-should-be-treated-as-an-incident-even-if-the-average-error-rate-is-small.-when-a-threshold-is-breached-the-monitoring-owner-should-assess-its-severity-affected-population-root-cause-and-potential-business-impact.-the-response-may-include-additional-samples-restrictions-on-particular-tasks-or-users-correction-of-rag-content-or-prompts-temporary-human-approval-requirements-suspension-of-tool-access-or-withdrawal-of-the-use-case.-a-remediation-plan-should-name-an-accountable-owner-actions-due-dates-interim-controls-independent-testing-where-appropriate-and-evidence-required-for-closure.-material-breaches-and-overdue-high-severity-actions-should-be-escalated-to-mrm-and-the-relevant-governance-committee.-the-monitoring-report-should-make-clear-what-changed-why-it-matters-and-whether-the-system-may-continue-operating-under-its-current-approval.">A
+components-based framework identifies what to observe; it does not by
+itself constitute a monitoring program. For each production use case,
+the first line should maintain a written monitoring plan, approved under
+the institution's MRM standards. The plan should identify the monitored
+population, the critical tasks and failure modes, the baseline
+established at validation, the metrics and limits, the data and sampling
+methods, the frequency of review, and named owners for investigation and
+remediation. The monitoring scope must include each material component
+of the deployed system, not just the foundation model.<br/>
+<br/>
+A practical plan combines four sources of evidence. First, automated
+production logs capture use, system versions, retrieval and tool
+activity, failed controls, and operational exceptions. Second, a
+risk-based sample of outputs is reviewed against authoritative sources
+and business requirements. Third, event-driven tests address vendor
+releases, changes in RAG content or permissions, new user groups, and
+significant incidents. Fourth, business outcome reviews examine
+complaints, corrections, overrides, downstream decisions, losses, and
+near misses. The first line should reconcile these sources rather than
+report them as unrelated dashboards.<br/>
+<br/>
+Each metric needs a precise definition: numerator, denominator, sampling
+unit, exclusions, baseline, limit, observation window, and data owner.
+For example, the material unsupported-claim rate is the number of
+material claims not supported by approved evidence divided by the number
+of material claims reviewed. Its trend is assessed separately for major
+tasks and user groups. A serious unauthorized tool action, by contrast,
+should be treated as an incident even if the average error rate is
+small.<br/>
+<br/>
+When a threshold is breached, the monitoring owner should assess its
+severity, affected population, root cause, and potential business
+impact. The response may include additional samples, restrictions on
+particular tasks or users, correction of RAG content or prompts,
+temporary human approval requirements, suspension of tool access, or
+withdrawal of the use case. A remediation plan should name an
+accountable owner, actions, due dates, interim controls, independent
+testing where appropriate, and evidence required for closure. Material
+breaches and overdue high-severity actions should be escalated to MRM
+and the relevant governance committee. The monitoring report should make
+clear what changed, why it matters, and whether the system may continue
+operating under its current approval.</p><h2 id="sampling-automated-monitoring-plus-risk-based-human-review">6.4
+Sampling: automated monitoring plus risk-based human review</h2><p>Reviewing every response manually is usually impractical. The
+monitoring design should combine automated measures with human review of
+representative and higher-risk samples. Sample selection should reflect
+task, business impact, language, user group, model version, retrieved
+source, and tool access. Random samples help estimate routine
+performance; targeted samples are needed to identify severe or uncommon
+failures. The two should be recorded separately to avoid presenting an
+intentionally risk-weighted sample as an unbiased estimate of the
+overall error rate.</p><p><span class="math inline">\(\widehat{p} = \frac{1}{n}\sum_{i =
+1}^{n}I\left( E_{i} \right)\)</span> (6.4)</p><p>Let I(E_i) equal 1 if the specified undesirable event occurs in
+observation i, and 0 otherwise. The sample proportion p̂ then estimates
+the event rate for the defined sampling population. Under independent
+Bernoulli sampling, its conventional estimated standard error is shown
+in Equation (6.5). The event, unit of observation, and population must
+be specified before this calculation is interpreted.</p><p><span class="math inline">\(SE\left( \widehat{p} \right) =
+\sqrt{\frac{\widehat{p}\left( 1 - \widehat{p} \right)}{n}}\)</span>
+(6.5)</p><p>The independent-sampling assumption is often questionable in GenAI
+applications. Errors may be correlated within prompt families,
+documents, languages, user groups, model versions, or retrieval
+pathways. These effects are neither necessarily independent nor
+additive. The usual binomial standard error can therefore understate
+uncertainty. For monitoring, I would distinguish three objectives:
+estimating an average error rate for a well-defined population,
+comparing performance across meaningful segments, and detecting severe
+failure scenarios. Stratified random sampling, cluster-aware confidence
+intervals or bootstrap methods, and separate scenario testing may be
+appropriate for these different objectives. No statistical adjustment
+eliminates the need to investigate an observed control failure. Where
+reliable probability sampling is unavailable, findings should be
+reported as sample results rather than population estimates.</p><h2 id="thresholds-and-traffic-light-escalation">6.5 Thresholds and
+traffic-light escalation</h2><p>Limits should be established at approval rather than after
+performance deteriorates. They may be absolute (for example, no
+unauthorized access), relative to a validated baseline, or based on
+sustained deterioration supported by statistical evidence. A breach
+should lead to a defined investigation and escalation process.
+Statistical significance alone is not sufficient: a single serious
+breach may require immediate action.</p><p><span class="math inline">\(\Delta m_{t} = m_{t} -
+m_{baseline}\)</span> (6.6)</p><table>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Status</strong></th>
+<th><strong>Illustrative condition</strong></th>
+<th><strong>Typical response</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Green</td>
+<td>Within tolerance; no material configuration change</td>
+<td>Continue ordinary monitoring</td>
+</tr>
+<tr class="even">
+<td>Amber</td>
+<td>Metric deterioration, unusual use, emerging incident pattern, or
+minor configuration change</td>
+<td>Investigate, increase sampling, apply compensating control</td>
+</tr>
+<tr class="odd">
+<td>Red</td>
+<td>Tolerance breach, serious safety/security event, material unapproved
+change, or consequential business error</td>
+<td>Restrict/suspend affected use; escalate; assess revalidation</td>
+</tr>
+</tbody>
+</table><table>
+<colgroup>
+<col style="width: 100%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>MRM Principle 6-A — Predefine escalation.</strong>
+Monitoring is most credible when metrics, tolerances, owners, escalation
+paths, and revalidation triggers are defined before adverse results
+appear.</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table><h2 id="monitoring-factuality-and-grounding">6.6 Monitoring factuality
+and grounding</h2><p>For applications that depend on documents or authoritative records,
+factuality and grounding are related but different. Factuality asks
+whether an assertion is correct. Grounding asks whether the assertion is
+supported by the specific sources the system was required to use. A
+correct statement without an approved supporting source may still be
+unacceptable in a controlled banking process. Equally, a retrieved
+document can be obsolete or wrong.</p><p><span class="math inline">\(Groundedness = \frac{\#\ material\
+claims\ supported\ by\ approved\ evidence}{\#\ material\
+claims}\)</span> (6.7)</p><p>Automated LLM-based evaluations can reduce the cost of review, but
+the evaluator is itself a model with limitations. Its findings should be
+compared with judgments from qualified reviewers, particularly for
+material claims and disputed cases. The evidence trail should permit an
+independent reviewer to trace a consequential answer to its underlying
+source.</p><p>There is no universal sample size or acceptable grounding rate. For a
+simple independently sampled proportion, a planning approximation is n ≈
+z²p(1 − p)/e², where z is the standard normal critical value for the
+desired confidence level, p is the assumed success rate, and e is the
+target half-width. With p = 0.95, z ≈ 1.96 (95% confidence), and e =
+0.02, the result is approximately 456 claims; at e = 0.01, approximately
+1,825 claims. These calculations are only starting points. Correlation
+among claims, unequal sampling rates, and differences across tasks may
+require a larger effective sample or methods that account for
+clustering. The unit should be defined carefully: multiple claims from
+the same answer are not necessarily independent.</p><p>Acceptance criteria should reflect the consequences of error. A
+drafting assistant may tolerate limited immaterial defects. A
+credit-policy or regulatory assistant should face tighter requirements
+for material statements and may have zero tolerance for specified
+critical failures. The limits, including any permitted exceptions,
+belong in the original approval and monitoring plan.</p><h2 id="monitoring-rag-systems">6.7 Monitoring RAG systems</h2><p>RAG systems require monitoring of retrieval and generation
+separately. If an answer is wrong, the cause may be failure to retrieve
+the right source, incorrect ranking, inadequate use of retrieved
+evidence, or an outdated or contradictory document. Each cause calls for
+a different remedy.</p><p><span class="math inline">\(Recall@k = \frac{\#\ relevant\ items\
+retrieved\ in\ top\ k}{\#\ relevant\ items}\)</span> (6.8)</p><p><span class="math inline">\(Precision@k = \frac{\#\ relevant\ items\
+retrieved\ in\ top\ k}{k}\)</span> (6.9)</p><p>Production controls should also cover additions and removal of
+documents, effective dates, embedding and index versions, metadata,
+access permissions, retrieval failures, conflicting sources, and signs
+of indirect prompt injection. A corpus update should be assessed for its
+effect on both answer quality and information access.</p><p>Recall@k and Precision@k should be measured before approval against a
+labeled test set with known relevant sources. The set should cover
+important document classes, query types, languages, and high-risk cases.
+Production monitoring can then compare results with that baseline using
+newly labeled queries and repeat tests after material changes in the
+corpus, embedding model, index, retrieval logic, or reranking. A
+production history improves drift assessment, but does not replace
+pre-production testing.</p><h2 id="drift-in-genai-systems">6.8 Drift in GenAI systems</h2><p id="drift-is-meaningful-only-relative-to-a-baseline.-the-monitoring-plan-should-say-what-is-changing-how-it-will-be-measured-and-what-degree-of-change-requires-investigation.-some-changes-are-statistical-such-as-a-shift-in-prompt-categories-or-language-mix.-others-are-categorical-such-as-the-introduction-of-a-new-permission-or-vendor-model-version.-the-measure-must-match-the-underlying-risk.">Drift
+is meaningful only relative to a baseline. The monitoring plan should
+say what is changing, how it will be measured, and what degree of change
+requires investigation. Some changes are statistical, such as a shift in
+prompt categories or language mix. Others are categorical, such as the
+introduction of a new permission or vendor model version. The measure
+must match the underlying risk.</p><p>A useful notation for dimension j is <span class="math inline">\(Driftⱼ(t)\  = \ dⱼ(Zⱼ,ₜ,\ Zⱼ,₀)\)</span>. Here
+Zⱼ,₀ is the validated baseline, Zⱼ,ₜ is the observed state at time t,
+and dⱼ is a comparison measure appropriate to the risk. This may be a
+distributional distance, a category-frequency difference, a
+retrieval-performance measure, or a configuration-change indicator.
+There is no single drift statistic for the complete GenAI system.</p><p>Drift extends beyond conventional changes in input data. A GenAI
+application can experience prompt drift, changes in its user population
+and tasks, changes in available knowledge, retrieval changes,
+vendor-model changes, changes to enabled tools, and weakening or
+modification of controls. The distinctions matter because the
+appropriate owner and remedial action differ.</p><table>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Drift type</strong></th>
+<th><strong>Example</strong></th>
+<th><strong>Potential consequence</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Prompt drift</td>
+<td>Users move from summarization to advice or decision support</td>
+<td>System used beyond approved purpose</td>
+</tr>
+<tr class="even">
+<td>Population drift</td>
+<td>New business unit, geography, language, or customer segment</td>
+<td>Performance/fairness may change</td>
+</tr>
+<tr class="odd">
+<td>Knowledge drift</td>
+<td>Policies, laws, products, or facts change</td>
+<td>Stale or incorrect answers</td>
+</tr>
+<tr class="even">
+<td>RAG drift</td>
+<td>Corpus/index/embedding changes</td>
+<td>Retrieval quality and permissions change</td>
+</tr>
+<tr class="odd">
+<td>Model drift</td>
+<td>Vendor silently or explicitly changes model version</td>
+<td>Behavior changes without local code change</td>
+</tr>
+<tr class="even">
+<td>Tool drift</td>
+<td>New API, permission, or action is enabled</td>
+<td>Error can create new external consequences</td>
+</tr>
+<tr class="odd">
+<td>Control drift</td>
+<td>Guardrail thresholds or system prompts change</td>
+<td>Risk tolerance may be weakened</td>
+</tr>
+</tbody>
+</table><h2 id="section"></h2><h2 id="incident-and-near-miss-monitoring">6.9 Incident and near-miss
+monitoring</h2><p>An acceptable average error rate can conceal a serious tail event.
+The monitoring process must therefore record incidents and near misses
+in addition to aggregate metrics. Unauthorized disclosure, incorrect
+consequential advice, successful prompt injection, unsafe code
+execution, or bypass of a human approval step warrants separate analysis
+of severity, exposure, and possible propagation.</p><p><span class="math inline">\(Risk\ Exposure \approx
+\sum_{j}^{}{Frequency}_{j} \times {Severity}_{j}\)</span> (6.10)</p><p>The purpose of Equation (6.10) is to keep rare, high-severity events
+visible. A low average frequency cannot be used to dismiss an incident
+whose consequences could be substantial.</p><h2 id="monitoring-frequency">6.10 Monitoring frequency</h2><table>
+<colgroup>
+<col style="width: 50%"/>
+<col style="width: 49%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Cadence</strong></th>
+<th><strong>Illustrative activities</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Real time / near real time</td>
+<td>Security events, prohibited tool calls, access-control failures,
+severe content events, service availability</td>
+</tr>
+<tr class="even">
+<td>Daily / weekly</td>
+<td>Operational metrics, drift dashboards, incidents, unusual prompt
+categories, tool-use anomalies</td>
+</tr>
+<tr class="odd">
+<td>Monthly / quarterly</td>
+<td>Human sample review, factuality/grounding tests, business outcomes,
+complaints, overrides, risk indicators</td>
+</tr>
+<tr class="even">
+<td>Event driven</td>
+<td>Vendor release, prompt change, corpus rebuild, new tool, material
+incident, regulatory/business change</td>
+</tr>
+<tr class="odd">
+<td>Periodic , or at least annually, comprehensive review</td>
+<td>Reconfirm use case, limitations, controls, validation assumptions,
+inventory, risk tier, and residual risk</td>
+</tr>
+</tbody>
+</table><h1 id="dynamic-evolution-change-control-and-agentic-ai">7. Dynamic
+Evolution, Change Control, and Agentic AI</h1><h2 id="genai-systems-can-change-without-retraining">7.1 GenAI systems
+can change without retraining</h2><p>A GenAI system may evolve without any change to its foundation-model
+weights. Prompts, retrieval sources, tool permissions, memory, inference
+settings, and orchestration rules can change the outcome. For model risk
+purposes, the relevant object is the whole application in its current
+configuration.</p><p><span class="math inline">\(\Delta S_{t} = \left( \Delta W_{t},\Delta
+D_{t},\Delta P_{t},\Delta R_{t},\Delta T_{t},\Delta G_{t},\Delta U_{t}
+\right)\)</span> (7.1)</p><p>Change control must therefore apply to the deployed system, not just
+software releases or retraining of the foundation model.</p><h2 id="materiality-of-change">7.2 Materiality of change</h2><p>Not every modification warrants full revalidation. The important
+question is whether a change could alter system behavior, the extent of
+use, the effectiveness of controls, or potential loss. An impact
+assessment should examine the affected components, evidence from prior
+validation, regression-test results, and the possibility of unexpected
+interactions.</p><p><span class="math inline">\(C = \sum_{j = 1}^{J}w_{j}c_{j}\)</span>
+(7.2)</p><p>In Equation (7.2), c_j represents the size of a change and w_j its
+relative risk importance. The expression is an illustration, not a
+universal numerical rule. A single change that introduces unauthorized
+external action should not be offset by several low-risk or unchanged
+components.</p><table>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Change class</strong></th>
+<th><strong>Examples</strong></th>
+<th><strong>MRM response</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Minor</td>
+<td>Formatting prompt, non-behavioral UI change, routine approved corpus
+refresh</td>
+<td>Document; regression checks</td>
+</tr>
+<tr class="even">
+<td>Moderate</td>
+<td>Prompt logic change, embedding update, retrieval/reranking change,
+guardrail tuning</td>
+<td>Impact assessment; targeted testing; validator notification</td>
+</tr>
+<tr class="odd">
+<td>Material</td>
+<td>Foundation-model version, new high-impact use case, new external
+tool/action, major corpus or permission change</td>
+<td>Independent targeted/full revalidation before or promptly after
+controlled deployment</td>
+</tr>
+<tr class="even">
+<td>Emergency</td>
+<td>Security patch or vendor-forced change</td>
+<td>Controlled emergency process, compensating controls, retrospective
+validation</td>
+</tr>
+</tbody>
+</table><h2 id="versioning-and-reproducibility">7.3 Versioning and
+reproducibility</h2><p>For important decisions and incidents, the institution should be able
+to reconstruct which effective system was used. Recording only the
+provider's model name is not sufficient. The record should identify
+prompt and configuration versions, retrieval sources and indexes, tools
+and permissions, relevant context, guardrails, external data, and the
+decision time, subject to applicable data-retention and privacy
+rules.</p><table>
+<colgroup>
+<col style="width: 100%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Minimum reproducibility record.</strong> Record the
+foundation-model/version, system/developer prompt version, decoding
+configuration, RAG corpus/index/embedding versions, retrieved source
+identifiers, tool versions and permissions, guardrail configuration,
+relevant conversation context, timestamp, and material external data
+used.</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table><h2 id="vendor-model-updates-and-third-party-opacity">7.4 Vendor model
+updates and third-party opacity</h2><p>Third-party models create a difficult change-control issue. A vendor
+may change model behavior, safety settings, context limits, or serving
+arrangements without changing the application code used by the bank.
+Where possible, the institution should obtain advance notice, keep
+records of vendor releases, and test material changes before production
+use. A familiar product name does not establish that behavior is
+unchanged.</p><p>Limited transparency does not remove the bank's obligation to assess
+risk. It may justify narrower permitted uses, stronger testing, version
+pinning when available, contingency arrangements, and tighter
+monitoring. Unresolved information gaps should be identified in the
+approval decision.</p><h2 id="agentic-ai-changes-the-loss-mechanism">7.5 Agentic AI changes
+the loss mechanism</h2><p>An incorrect answer is one form of model risk; an incorrect action
+may produce an immediate business loss. An agent can plan a sequence of
+steps, invoke tools, act on the results, and repeat. The resulting
+exposure depends on the full sequence, not only on the reasonableness of
+any individual response.</p><p><span class="math inline">\(O_{t} \rightarrow P_{t} \rightarrow A_{t}
+\rightarrow O_{t + 1}\)</span> (7.3)</p><p>Agent monitoring must assess whether a sequence stays within its
+approved purpose, permissions, budgets, approval gates, and stopping
+conditions. An agent with broad access and weak controls can amplify an
+initially small mistake.</p><table>
+<colgroup>
+<col style="width: 50%"/>
+<col style="width: 50%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Agentic control</strong></th>
+<th><strong>Purpose</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Least privilege</td>
+<td>Limit tools, data, and actions to what the use case requires</td>
+</tr>
+<tr class="even">
+<td>Human approval gates</td>
+<td>Require explicit approval for consequential or irreversible
+actions</td>
+</tr>
+<tr class="odd">
+<td>Transaction / resource limits</td>
+<td>Bound money, records, messages, compute, tokens, and action
+counts</td>
+</tr>
+<tr class="even">
+<td>Sandboxing</td>
+<td>Separate code/tool execution from sensitive production
+environments</td>
+</tr>
+<tr class="odd">
+<td>Allow/deny lists</td>
+<td>Restrict destinations, functions, file types, commands, or
+counterparties</td>
+</tr>
+<tr class="even">
+<td>State and memory controls</td>
+<td>Prevent inappropriate persistence or cross-user leakage</td>
+</tr>
+<tr class="odd">
+<td>Loop / timeout limits</td>
+<td>Prevent runaway planning and unbounded consumption</td>
+</tr>
+<tr class="even">
+<td>Audit logging</td>
+<td>Reconstruct reasoning inputs, tool calls, approvals, and
+outcomes</td>
+</tr>
+<tr class="odd">
+<td>Rollback / reversibility</td>
+<td>Undo actions where technically and legally possible</td>
+</tr>
+</tbody>
+</table><h2 id="dynamic-improvement-and-recursive-self-improvement-rsi">7.6
+Dynamic improvement and recursive self-improvement (RSI)</h2><p>Recursive self-improvement (RSI) is used to describe different forms
+of adaptation, and these should not be confused. At one level, an LLM
+changes its answer or plan as the context evolves, without altering its
+weights. At another, a controlled system may update memory, RAG sources,
+prompts, or even fine-tuning based on feedback. Strong-form RSI would go
+further: the system improves the mechanisms used to improve itself,
+potentially producing repeated capability gains with reduced human
+intervention. These are different risks and should not be governed as if
+they were the same.</p><table>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Level</strong></th>
+<th><strong>What changes?</strong></th>
+<th><strong>MRM interpretation</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Inference-time adaptation</td>
+<td>Context, reasoning trajectory, retrieved information</td>
+<td>Ordinary dynamic behavior; monitor outputs/actions</td>
+</tr>
+<tr class="even">
+<td>Controlled system learning</td>
+<td>Memory, prompts, RAG, policies, fine-tuning under governed
+process</td>
+<td>Change management + validation required</td>
+</tr>
+<tr class="odd">
+<td>Strong-form RSI</td>
+<td>System modifies or designs components that materially improve future
+improvement capability</td>
+<td>Potentially discontinuous risk; requires strict containment,
+authorization, staged evaluation, and governance</td>
+</tr>
+</tbody>
+</table><p>For current MRM practice, it is neither necessary nor sound to assume
+that every agent can improve itself recursively. The immediate
+requirement is clear: material self-modifications must not enter
+production without authorized change control, testing, approval,
+documentation, and, where feasible, rollback. A system may recommend
+improvements, but should not be allowed to approve its own material
+changes.</p><table>
+<colgroup>
+<col style="width: 100%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><em><strong>MRM Principle 7-A — No uncontrolled self-modification. A
+system may generate proposed prompts, code, policies, or model changes,
+but material changes should not become production configuration solely
+because the system proposed them. The scope of permitted
+self-improvement, the components that may change, the speed or frequency
+of change, and the boundaries of the model/system architecture should be
+defined before deployment. Independent control functions should validate
+the self-improvement mechanism and its limits, and material changes
+should pass through separate proposal, testing, approval, deployment,
+and rollback controls.</strong></em></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table><h2 id="revalidation-triggers">7.7 Revalidation triggers</h2><p>Revalidation should be triggered by changes that could invalidate
+prior evidence. Illustrative triggers include:</p><ul>
+<li><p>foundation-model or material vendor-version change;</p></li>
+<li><p>new fine-tuning or adaptation method;</p></li>
+<li><p>material system-prompt or orchestration change;</p></li>
+<li><p>embedding, retrieval, reranking, or RAG-corpus change that
+affects behavior or access;</p></li>
+<li><p>new tool, API, permission, autonomous action, or memory
+capability;</p></li>
+<li><p>new material user population, language, geography, business
+process, or decision type;</p></li>
+<li><p>significant deterioration in factuality, grounding, robustness,
+safety, security, fairness, or business outcomes;</p></li>
+<li><p>material incident, near miss, control failure, or newly
+discovered vulnerability;</p></li>
+<li><p>legal, regulatory, policy, or product change that invalidates
+knowledge or approved use; and</p></li>
+<li><p>evidence that original validation data or benchmarks were
+contaminated or no longer representative.</p></li>
+</ul><h1 id="governance-and-control">8. Governance and Control</h1><h2 id="governance-objective">8.1 Governance objective</h2><p>The objective of governance is to put accountable decisions behind
+technical evidence. GenAI risk cannot be eliminated, but management must
+decide which uses are permitted, what restrictions apply, who accepts
+residual risk, and when an issue must be escalated. These decisions
+should be documented and subject to independent challenge.</p><h2 id="genai-policy-standards-and-procedures">8.2 GenAI policy,
+standards, and procedures</h2><p>A workable governance framework needs policy, standards, and
+procedures, each serving a different purpose. Policy sets scope,
+responsibilities, risk appetite, prohibited uses, and approval
+authorities. Standards establish minimum expectations for inventory,
+development, validation, monitoring, security, and change control.
+Procedures specify how these requirements are implemented, evidenced,
+escalated, and reviewed. Without this hierarchy, broad principles are
+difficult to enforce consistently across business units.</p><table>
+<colgroup>
+<col style="width: 25%"/>
+<col style="width: 24%"/>
+<col style="width: 25%"/>
+<col style="width: 25%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Layer</th>
+<th>Primary purpose</th>
+<th>Illustrative GenAI content</th>
+<th>Typical owner/approval</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Policy</td>
+<td>Set governing principles and risk appetite</td>
+<td>Scope, roles, prohibited uses, independence, approval authority,
+third-party accountability, escalation</td>
+<td>Board/senior management or delegated risk committee</td>
+</tr>
+<tr class="even">
+<td>Standards</td>
+<td>Define mandatory minimum controls</td>
+<td>Inventory fields, risk tiering, development documentation,
+validation requirements, RAG/tool controls, monitoring,
+change/revalidation triggers</td>
+<td>MRM and relevant control functions</td>
+</tr>
+<tr class="odd">
+<td>Procedures</td>
+<td>Define operational execution</td>
+<td>Intake, testing steps, evidence retention, issue workflow, incident
+response, model/version updates, exception process</td>
+<td>Business, development, validation, operations and control teams</td>
+</tr>
+</tbody>
+</table><h2 id="inventory-from-model-inventory-to-ai-system-inventory">8.3
+Inventory: from model inventory to AI-system inventory</h2><p>A traditional inventory identifies the model, owner, intended use,
+risk tier, and validation status. That is not enough for GenAI. The
+inventory must describe the effective application: model and version,
+prompts and orchestration, RAG sources, tools, users, permissions,
+autonomy, major controls, and the decisions it can influence. Material
+dependencies should be visible so changes can be assessed across the
+system rather than one component at a time.</p><table>
+<colgroup>
+<col style="width: 50%"/>
+<col style="width: 50%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Inventory field</strong></th>
+<th><strong>Illustrative content</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>System/use case</td>
+<td>Business purpose, users, decisions, prohibited uses</td>
+</tr>
+<tr class="even">
+<td>Foundation model</td>
+<td>Provider, model family/version, hosting arrangement</td>
+</tr>
+<tr class="odd">
+<td>Adaptation</td>
+<td>Fine-tuning, adapters, preference optimization</td>
+</tr>
+<tr class="even">
+<td>Prompt/orchestration</td>
+<td>Controlled prompt versions, routing/planning logic</td>
+</tr>
+<tr class="odd">
+<td>Knowledge/RAG</td>
+<td>Corpora, owners, embeddings, indexes, access controls</td>
+</tr>
+<tr class="even">
+<td>Tools/agency</td>
+<td>APIs, actions, permissions, autonomy level</td>
+</tr>
+<tr class="odd">
+<td>Data classification</td>
+<td>Sensitive, confidential, customer, regulated data</td>
+</tr>
+<tr class="even">
+<td>Guardrails</td>
+<td>Filters, human gates, policy engines, transaction limits</td>
+</tr>
+<tr class="odd">
+<td>Risk tier</td>
+<td>Inherent risk, exposure, consequence, autonomy</td>
+</tr>
+<tr class="even">
+<td>Validation</td>
+<td>Scope, date, conclusion, conditions, limitations</td>
+</tr>
+<tr class="odd">
+<td>Monitoring</td>
+<td>KRIs/KPIs, thresholds, owner, cadence</td>
+</tr>
+<tr class="even">
+<td>Change status</td>
+<td>Current versions, pending changes, revalidation triggers</td>
+</tr>
+<tr class="odd">
+<td>Incidents</td>
+<td>Material events, remediation, lessons learned</td>
+</tr>
+</tbody>
+</table><h2 id="risk-tiering">8.4 Risk tiering</h2><p>Risk tiering should be driven chiefly by use, exposure, and the
+consequences of failure. Technical sophistication alone is a poor
+measure. A relatively simple application embedded in underwriting or
+customer communications may warrant stronger controls than a more
+capable model used only for internal drafting.</p><p><span class="math inline">\(R_{inherent} = f(I,E,A,D,S,U)\)</span>
+(8.1)</p><p>where I is impact severity, E exposure/volume, A autonomy, D data
+sensitivity, S security surface, and U uncertainty. Institutions may
+operationalize these dimensions qualitatively or quantitatively.</p><h2 id="three-lines-of-defense-and-effective-challenge">8.5 Three lines
+of defense and effective challenge</h2><p>The three lines of defense remain relevant. Business and technology
+owners in the first line are accountable for design, operation,
+monitoring, and remediation. Independent MRM provides validation and
+effective challenge, drawing on specialists in cyber, privacy,
+compliance, data, and operational risk. Internal audit evaluates the
+governance and control framework. These responsibilities should be
+coordinated without making MRM the sole owner of risks it cannot
+control.</p><table>
+<colgroup>
+<col style="width: 100%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Governance caution.</strong> GenAI risk is cross-functional.
+Assigning the system to MRM alone can leave security, privacy, legal,
+data, conduct, and operational risks fragmented. Assigning it only to
+technology risk can equally miss model-performance and validation
+concerns.</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table><h2 id="risk-appetite-and-use-restrictions">8.6 Risk appetite and use
+restrictions</h2><p>Risk appetite should be stated in operational terms. Restrictions may
+prohibit autonomous customer commitments, require review of
+consequential advice, limit confidential data access, or forbid certain
+tools and transactions. Approval limits should follow from the likely
+loss and the demonstrated effectiveness of controls, not merely the
+quality of a benchmark score.</p><p><span class="math inline">\(R_{residual} = R_{inherent} - Control\
+Effectiveness\)</span> (8.2)</p><p>Equation (8.2) is a conceptual way to frame the decision. Management
+accepts the residual risk after controls have been evaluated, not the
+model's inherent risk and not its stated performance in isolation.</p><h2 id="human-oversight-meaningful-rather-than-ceremonial">8.7 Human
+oversight: meaningful rather than ceremonial</h2><p>Human review is effective only if the reviewer can recognize and
+challenge errors. Fluency can encourage overreliance; high volume can
+turn approval into a routine click. Reviewers need access to supporting
+evidence, adequate expertise and time, authority to stop the action, and
+clear responsibility for the decision. Review outcomes should feed back
+into monitoring.</p><table>
+<colgroup>
+<col style="width: 49%"/>
+<col style="width: 50%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Weak oversight</strong></th>
+<th><strong>Stronger oversight</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Reviewer sees only generated answer</td>
+<td>Reviewer sees answer plus authoritative sources/evidence</td>
+</tr>
+<tr class="even">
+<td>Approval expected by default</td>
+<td>Reviewer is explicitly accountable for acceptance/rejection</td>
+</tr>
+<tr class="odd">
+<td>High-volume manual clicks</td>
+<td>Risk-based sampling or gating of consequential cases</td>
+</tr>
+<tr class="even">
+<td>No feedback capture</td>
+<td>Overrides/errors feed monitoring and remediation</td>
+</tr>
+<tr class="odd">
+<td>Reviewer cannot stop action</td>
+<td>Reviewer has technical authority to block/rollback</td>
+</tr>
+</tbody>
+</table><h2 id="third-party-and-foundation-model-governance">8.8 Third-party and
+foundation-model governance</h2><p>Using a vendor does not transfer the bank's accountability. Due
+diligence should address what the model can and cannot do, how data are
+handled, security, resilience, vendor changes, incidents,
+subcontractors, and exit arrangements. When proprietary restrictions
+prevent inspection, that limitation should be documented and addressed
+through independent tests, contractual controls, limits on use, and
+continuing monitoring.</p><h2 id="documentation-and-auditability">8.9 Documentation and
+auditability</h2><p>Documentation should allow a knowledgeable independent reviewer to
+understand why a system was approved, the assumptions and limitations
+behind the decision, what subsequently changed, and how issues were
+addressed. The level of detail should reflect materiality, but a
+decision should never depend solely on knowledge held by one developer
+or vendor.</p><h2 id="issue-management">8.10 Issue management</h2><table>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Issue severity</strong></th>
+<th><strong>Illustrative GenAI example</strong></th>
+<th><strong>Expected treatment</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Critical</td>
+<td>Unauthorized external action, severe data disclosure, systemic
+control bypass</td>
+<td>Immediate containment/suspension; executive escalation; root cause;
+revalidation</td>
+</tr>
+<tr class="even">
+<td>High</td>
+<td>Material hallucination in consequential workflow, repeatable
+injection path</td>
+<td>Prompt remediation and/or scope restriction; independent retest</td>
+</tr>
+<tr class="odd">
+<td>Moderate</td>
+<td>Performance deterioration in a bounded task, stale RAG segment</td>
+<td>Time-bound remediation; enhanced monitoring</td>
+</tr>
+<tr class="even">
+<td>Low</td>
+<td>Documentation gap or minor non-behavioral control weakness</td>
+<td>Track and remediate through ordinary issue process</td>
+</tr>
+</tbody>
+</table><h1 id="integrated-genai-mrm-framework">9. Integrated GenAI MRM
+Framework</h1><h2 id="lifecycle-view">9.1 Lifecycle view</h2><p>The framework developed in Parts I–III is a continuing MRM process,
+not a one-time validation exercise. Monitoring, incidents, and changes
+can lead back to development, independent testing, revised restrictions,
+or withdrawal of approval. This feedback is especially important when
+the components of a GenAI application evolve at different rates.</p><table>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Lifecycle stage</strong></th>
+<th><strong>Primary MRM question</strong></th>
+<th><strong>Key evidence</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1. Scope &amp; inventory</td>
+<td>What is the risk-bearing system and intended use?</td>
+<td>Use case, architecture, components, users, risk tier</td>
+</tr>
+<tr class="even">
+<td>2. Data &amp; knowledge</td>
+<td>What data and knowledge sources shape behavior?</td>
+<td>Lineage, rights, quality, RAG controls, contamination
+assessment</td>
+</tr>
+<tr class="odd">
+<td>3. Development</td>
+<td>Why should the system work and how was it engineered?</td>
+<td>Design, prompts, model choice, evaluations, limitations</td>
+</tr>
+<tr class="even">
+<td>4. Independent validation</td>
+<td>Does independent evidence support use within tolerance?</td>
+<td>Conceptual challenge, tests, implementation verification, residual
+risk</td>
+</tr>
+<tr class="odd">
+<td>5. Approval &amp; conditions</td>
+<td>Who accepts residual risk and under what limits?</td>
+<td>Approval, restrictions, thresholds, monitoring plan</td>
+</tr>
+<tr class="even">
+<td>6. Ongoing monitoring</td>
+<td>Does the system remain reliable and within the approved
+envelope?</td>
+<td>Telemetry, samples, incidents, outcomes, drift</td>
+</tr>
+<tr class="odd">
+<td>7. Change control</td>
+<td>Has the effective system changed materially?</td>
+<td>Version history, impact assessment, regression tests</td>
+</tr>
+<tr class="even">
+<td>8. Revalidation / remediation</td>
+<td>Does prior validation remain sufficient?</td>
+<td>Targeted/full revalidation, issue closure, revised approval</td>
+</tr>
+<tr class="odd">
+<td>9. Model Rejection / Decommission</td>
+<td>Is the model still relevant to the purpose?</td>
+<td>Decommissioning, remove from model inventory</td>
+</tr>
+</tbody>
+</table><h2 id="the-control-loop">9.2 The control loop</h2><p><span class="math inline">\(Scope \rightarrow Develop \rightarrow
+Validate \rightarrow Approve \rightarrow Monitor \rightarrow
+Change/Incident \rightarrow Revalidate\)</span> (9.1)</p><p>Approval cannot be treated as permanent evidence that a model remains
+fit for use. The institution's control capability rests on its ability
+to recognize meaningful changes, assess their effect on risk, and
+require renewed evidence when the original validation no longer
+applies.</p><h2 id="mapping-risks-to-controls-and-evidence">9.3 Mapping risks to
+controls and evidence</h2><table>
+<colgroup>
+<col style="width: 25%"/>
+<col style="width: 25%"/>
+<col style="width: 24%"/>
+<col style="width: 25%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Risk</strong></th>
+<th><strong>Preventive controls</strong></th>
+<th><strong>Detective evidence</strong></th>
+<th><strong>Corrective response</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Hallucination / unsupported claims</td>
+<td>RAG, constrained prompts, abstention rules</td>
+<td>Grounding tests, claim review, complaints</td>
+<td>Prompt/RAG change, narrower scope, human gate</td>
+</tr>
+<tr class="even">
+<td>Prompt injection</td>
+<td>Input isolation, trusted-source controls, tool permissions</td>
+<td>Adversarial tests, security telemetry</td>
+<td>Block source/path, tighten permissions, patch orchestration</td>
+</tr>
+<tr class="odd">
+<td>Stale knowledge</td>
+<td>Document ownership/effective dates</td>
+<td>Freshness metrics, failed-answer review</td>
+<td>Corpus refresh, source retirement</td>
+</tr>
+<tr class="even">
+<td>Excessive agency</td>
+<td>Least privilege, approval gates, limits</td>
+<td>Denied actions, tool logs, near misses</td>
+<td>Revoke permissions, add gate, redesign workflow</td>
+</tr>
+<tr class="odd">
+<td>Data leakage</td>
+<td>Access control, redaction, data policy</td>
+<td>DLP events, canary tests, incidents</td>
+<td>Contain, rotate credentials, restrict data/use</td>
+</tr>
+<tr class="even">
+<td>Vendor change</td>
+<td>Version pinning/change notice where available</td>
+<td>Regression suite, release monitoring</td>
+<td>Hold rollout, targeted/full revalidation</td>
+</tr>
+<tr class="odd">
+<td>Use drift</td>
+<td>Approved-use controls, training</td>
+<td>Prompt/use analytics, audit sampling</td>
+<td>Restrict users/use, retrain, reapprove</td>
+</tr>
+</tbody>
+</table><h2 id="a-practical-governance-dashboard">9.4 A practical governance
+dashboard</h2><p>A model-risk committee needs a clear assessment of exposures,
+exceptions, and decisions requiring action, not a raw dump of every test
+or prompt. Management reporting should distinguish ordinary performance
+fluctuations from material changes, unresolved control weaknesses, and
+breaches of risk appetite. A useful dashboard should include:</p><ul>
+<li><p>inventory counts by risk tier and autonomy level;</p></li>
+<li><p>validation status and overdue conditions;</p></li>
+<li><p>material vendor/model/RAG/tool changes;</p></li>
+<li><p>performance and grounding trends against thresholds;</p></li>
+<li><p>security incidents, prompt-injection attempts, and successful
+exploit rates;</p></li>
+<li><p>human overrides, complaints, and realized business
+errors;</p></li>
+<li><p>open high-severity issues and aging;</p></li>
+<li><p>systems operating under temporary exceptions or compensating
+controls; and</p></li>
+<li><p>revalidation pipeline and upcoming material changes.</p></li>
+</ul><h1 id="integrated-case-study-bankco-policy-and-credit-assistant">10.
+Integrated Case Study — BankCo Policy and Credit Assistant</h1><h2 id="business-proposal">10.1 Business proposal</h2><p>BankCo proposes an internal assistant for commercial-credit officers.
+It will summarize borrower records, retrieve approved credit policy,
+extract financial covenants, draft sections of credit memoranda, and
+answer policy questions. In a later phase, management wants the
+assistant to populate selected underwriting fields. The system will not
+approve a loan, change a limit, or communicate a commitment to a
+customer.</p><h2 id="system-architecture">10.2 System architecture</h2><table>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Component</strong></th>
+<th><strong>BankCo design</strong></th>
+<th><strong>Principal risk</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Foundation model</td>
+<td>Third-party hosted LLM</td>
+<td>Vendor opacity/change</td>
+</tr>
+<tr class="even">
+<td>System prompt</td>
+<td>BankCo credit-policy instructions</td>
+<td>Prompt/configuration risk</td>
+</tr>
+<tr class="odd">
+<td>RAG</td>
+<td>Credit policy, underwriting manuals, approved product docs</td>
+<td>Freshness, access, retrieval quality</td>
+</tr>
+<tr class="even">
+<td>Borrower documents</td>
+<td>Financials, agreements, correspondence</td>
+<td>Confidentiality, extraction error, prompt injection in
+documents</td>
+</tr>
+<tr class="odd">
+<td>Tools</td>
+<td>Calculator and read-only underwriting database</td>
+<td>Tool misuse, implementation error</td>
+</tr>
+<tr class="even">
+<td>Output</td>
+<td>Draft memo, policy answer, extracted fields</td>
+<td>Hallucination, omission, false precision</td>
+</tr>
+<tr class="odd">
+<td>Human control</td>
+<td>Credit officer review; approval remains outside AI</td>
+<td>Automation bias, inadequate review</td>
+</tr>
+</tbody>
+</table><h2 id="initial-risk-assessment">10.3 Initial risk assessment</h2><p>This use case carries materially more risk than a general drafting
+assistant. Its answers may influence credit analysis and it will process
+confidential borrower information. In Phase 1, however, the assistant
+has no authority to make a credit decision or carry out customer-facing
+action. BankCo therefore assigns a high risk tier while distinguishing
+its initial decision-support role from autonomous underwriting.</p><h2 id="validation-plan">10.4 Validation plan</h2><p>Independent validation should challenge the application with
+production-like cases, including:</p><ul>
+<li><p>credit-policy questions with authoritative answers and effective
+dates;</p></li>
+<li><p>borrower documents containing ambiguous covenants, tables,
+footnotes, and conflicting statements;</p></li>
+<li><p>cases in which the correct response is to abstain or
+escalate;</p></li>
+<li><p>documents containing direct and indirect prompt-injection
+text;</p></li>
+<li><p>long-context cases where relevant information appears far from
+the question;</p></li>
+<li><p>permission tests using documents the requesting officer is not
+authorized to access;</p></li>
+<li><p>counterfactual and paraphrased variants to test robustness;
+and</p></li>
+<li><p>tool-use tests verifying calculator accuracy and read-only
+database permissions.</p></li>
+</ul><p>The validation recommendation is Approved with Conditions. Policy
+answers must cite controlled sources; extracted financial terms must
+receive human review; credit approval and write access remain outside
+the assistant's authority; retrieval and tool calls must be logged; and
+the first line must establish monitoring metrics and escalation
+thresholds before launch.</p><h2 id="monitoring-design">10.5 Monitoring design</h2><table>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Metric / event</strong></th>
+<th><strong>Threshold concept</strong></th>
+<th><strong>Escalation</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Material policy-answer grounding</td>
+<td>Very high required coverage</td>
+<td>Amber on deterioration; red for repeated unsupported consequential
+advice</td>
+</tr>
+<tr class="even">
+<td>Retrieval freshness</td>
+<td>No superseded policy as authoritative source</td>
+<td>Immediate corpus correction and impact review</td>
+</tr>
+<tr class="odd">
+<td>Extraction error</td>
+<td>Risk-based tolerance by field materiality</td>
+<td>Targeted remediation; expand sample</td>
+</tr>
+<tr class="even">
+<td>Prompt injection</td>
+<td>Zero tolerance for successful privilege escalation/tool misuse</td>
+<td>Security incident + suspend affected path</td>
+</tr>
+<tr class="odd">
+<td>Unauthorized retrieval</td>
+<td>Zero tolerance</td>
+<td>Immediate access-control incident</td>
+</tr>
+<tr class="even">
+<td>Human overrides</td>
+<td>Trend and reason codes</td>
+<td>Investigate concentration by task/model version</td>
+</tr>
+<tr class="odd">
+<td>Vendor version change</td>
+<td>Any material release</td>
+<td>Regression suite + change assessment</td>
+</tr>
+<tr class="even">
+<td>New tool/write permission</td>
+<td>Any introduction</td>
+<td>Material-change review before deployment</td>
+</tr>
+</tbody>
+</table><h2 id="a-material-change">10.6 A material change</h2><p>After six months, the vendor introduces a new model version. At the
+same time, BankCo proposes allowing the assistant to write covenant
+fields to its underwriting application. The intended business process is
+similar, but the risk is not. Model behavior may have changed, and an
+extraction mistake could now alter a production record.</p><p><span class="math inline">\(S_{t + 1} ≉ S_{t}\quad\text{for risk
+purposes when autonomy or consequence changes materially}\)</span>
+(10.1)</p><p>BankCo should not rely on its initial validation alone. It should
+compare the new model against the approved baseline, test extraction and
+tool use, check authorization and rollback, and require explicit human
+confirmation before a field is committed. The assessment must consider
+how the two changes interact, not simply test them in isolation.</p><h2 id="incident-scenario">10.7 Incident scenario</h2><p>A borrower PDF contains hidden instructions telling the assistant to
+disregard BankCo policy and retrieve unrelated internal records. The
+model partially follows those instructions. The retrieval service
+nevertheless denies access to the unauthorized documents, and no
+confidential information is disclosed. This is a near miss: one control
+failed, while a separate access control prevented a loss.</p><p>The incident response should distinguish:</p><ul>
+<li><p>root cause — indirect prompt injection in untrusted
+content;</p></li>
+<li><p>failed control — prompt/context isolation did not prevent
+instruction following;</p></li>
+<li><p>successful control — retrieval authorization enforced least
+privilege;</p></li>
+<li><p>exposure — attempted but unsuccessful unauthorized
+retrieval;</p></li>
+<li><p>remediation — strengthen document isolation and injection
+detection; add adversarial regression case; and</p></li>
+<li><p>governance consequence — reassess whether similar documents could
+exploit tools with different permissions.</p></li>
+</ul><table>
+<colgroup>
+<col style="width: 100%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Case-study lesson.</strong> Defense in depth matters. A
+GenAI system should not depend on the model reliably recognizing every
+malicious instruction. Deterministic access controls, least privilege,
+human gates, and audit logs can prevent a model-behavior failure from
+becoming a business loss.</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table><h2 id="what-the-case-illustrates">10.8 What the case illustrates</h2><p>The BankCo case illustrates why system-level MRM is needed. Part I
+identifies the system boundary and the risks in data and retrieval. Part
+II establishes evidence from development and independent validation.
+Part III adds the continuing obligation to monitor production behavior,
+manage vendor and tool changes, investigate incidents, and reconsider
+approval when risk changes.</p><h1 id="part-iii-summary">Part III Summary</h1><p>The main conclusions of Part III are:</p><ol type="1">
+<li><p>Ongoing monitoring must evaluate a multidimensional system, not
+only model accuracy.</p></li>
+<li><p>Monitoring should test both outcomes and whether the current
+system remains inside its validated operating envelope.</p></li>
+<li><p>Change control must cover model versions, prompts, RAG, tools,
+guardrails, users, and permissions; a system can change materially
+without retraining.</p></li>
+<li><p>Agentic AI raises the consequence of error and therefore requires
+least privilege, bounded actions, human gates, logging, reversibility,
+and explicit controls on self-modification.</p></li>
+<li><p>Governance should connect inventory, risk tiering, validation,
+approval, monitoring, incident management, change control, and
+revalidation into one closed-loop lifecycle.</p></li>
+<li><p>Recursive or system-level self-improvement can create additional
+model risk. The permitted scope of self-improvement, the components that
+may change, the speed or frequency of change, and any changes to the
+model/system architecture should be explicitly defined, independently
+challenged, and controlled through testing, approval, monitoring, and
+rollback requirements.</p></li>
+</ol><table>
+<colgroup>
+<col style="width: 100%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Integrated GenAI MRM principle.</strong> Validate the
+risk-bearing AI system, approve it within a defined operating scope,
+monitor both behavior and change, and require renewed independent
+challenge when the system or its risk moves materially beyond the
+evidence that supported approval.</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table><h1 id="part-iii-references-and-further-reading">Part III References and
+Further Reading</h1><p>1. Board of Governors of the Federal Reserve System, Office of the
+Comptroller of the Currency, and Federal Deposit Insurance Corporation
+(2026). Revised Guidance on Model Risk Management, SR 26-2, April 17,
+2026.</p><p>2. Autio, C., Schwartz, R., Dunietz, J., Jain, S., Stanley, M.,
+Tabassi, E., Hall, P., and Roberts, K. (2024). Artificial Intelligence
+Risk Management Framework: Generative Artificial Intelligence Profile,
+NIST AI 600-1.</p><p>3. National Institute of Standards and Technology (2026). TEVV-Athlon
+Framework for Evaluating AI Systems, NIST AI 200-2, Initial Public
+Draft.</p><p>4. OWASP GenAI Security Project (2026). OWASP Top 10 for LLM and
+Generative AI, including prompt injection, supply-chain vulnerabilities,
+data/model poisoning, improper output handling, excessive agency,
+system-prompt leakage, vector/embedding weaknesses, misinformation, and
+unbounded consumption.</p><p>5. Lewis, P. et al. (2020). Retrieval-Augmented Generation for
+Knowledge-Intensive NLP Tasks. Advances in Neural Information Processing
+Systems.</p><p>6. Vaswani, A. et al. (2017). Attention Is All You Need. Advances in
+Neural Information Processing Systems.</p><p>7. Goodfellow, I., Bengio, Y., and Courville, A. (2016). Deep
+Learning. MIT Press.</p><p>8. Rao, A., Keller, A., Kalra, N., et al. (2026). Challenges to the
+Monitoring of Deployed AI Systems. NIST AI 800-4, National Institute of
+Standards and Technology.</p></article></div></body></html>
