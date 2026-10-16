@@ -1,0 +1,2025 @@
+<!DOCTYPE html>
+
+<html lang="" xml:lang="" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8"/>
+
+<meta content="width=device-width, initial-scale=1.0, user-scalable=yes" name="viewport"/>
+<title>GenAI Model Risk Management</title>
+
+
+
+<style>
+:root{--ink:#243449;--soft:#536477;--blue:#255b86;--pale:#eff5fa;--line:#d5e0ea;--paper:#fff;--canvas:#f4f7fa}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--canvas);color:var(--ink);font:16px/1.72 Georgia,'Times New Roman',serif}
+.page{max-width:1450px;margin:auto;display:grid;grid-template-columns:290px minmax(0,1fr);gap:28px;padding:28px 24px 80px}
+nav{position:sticky;top:18px;align-self:start;max-height:calc(100vh - 36px);overflow-y:auto;border:1px solid var(--line);border-radius:13px;background:#fff;padding:20px;font:13px/1.5 system-ui,sans-serif}
+nav strong{display:block;font-size:15px;color:var(--blue);margin-bottom:14px}nav a{display:block;color:#374c62;text-decoration:none;padding:7px 8px;border-radius:6px}nav a:hover{background:var(--pale);color:#124d7a}nav a.sub{padding-left:20px;font-size:12px}
+article{min-width:0;background:var(--paper);box-shadow:0 3px 26px #213e5810;border:1px solid var(--line);border-radius:14px;padding:50px clamp(22px,5.5vw,76px) 72px}
+h1,h2,h3{font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif;line-height:1.27;color:#1d527a;scroll-margin-top:32px}h1{font-size:26px;margin:2.2em 0 .7em;padding-bottom:12px;border-bottom:2px solid var(--line)}h2{font-size:20px;margin:2em 0 .65em}h3{font-size:17px;margin:1.5em 0 .6em}
+article>h1:first-of-type{margin-top:0}p{margin:0 0 1.05em}ul,ol{padding-left:1.55em;margin:0 0 1.2em}li{padding-left:3px;margin-bottom:4px}a{color:#1e5d91}strong{color:#1e405e}
+table{border-collapse:collapse;width:100%;font:13px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;margin:20px 0 25px;table-layout:auto}th,td{border:1px solid #bccbd7;text-align:left;vertical-align:top;padding:9px 11px;overflow-wrap:anywhere}thead th{background:#e5eff6;color:#163b58}tbody tr:nth-child(even){background:#fafcfe}
+.math.display{display:block;overflow-x:auto;margin:1.45em 0;text-align:center;padding:6px 2px}mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;max-width:100%;padding:4px 0}blockquote{border-left:4px solid var(--blue);background:var(--pale);padding:14px 18px;margin:1.5em 0}
+.topline{font:700 11px system-ui,sans-serif;letter-spacing:.11em;text-transform:uppercase;color:#67849a;margin-bottom:12px}.reading-info{font:13px system-ui,sans-serif;color:#6b7b89;margin-bottom:24px}.footer{font:12px/1.5 system-ui,sans-serif;color:#758392;border-top:1px solid var(--line);padding-top:17px;margin-top:45px}
+@media(max-width:920px){.page{display:block;padding:0}nav{position:relative;max-height:240px;margin:12px;border-radius:9px}article{border-radius:0;border:0;padding:30px 22px}table{font-size:12px}th,td{padding:6px}}
+@media print{body{background:#fff}.page{display:block;padding:0}nav{display:none}article{box-shadow:none;border:0;padding:0}h1,h2,h3{break-after:avoid}tr{break-inside:avoid}@page{margin:17mm}}
+</style><meta content="width=device-width, initial-scale=1" name="viewport"/><script>window.MathJax={tex:{inlineMath:[["\\(","\\)"],["$","$"]],displayMath:[["\\[","\\]"]]},options:{skipHtmlTags:["script","noscript","style","textarea","pre","code"]}};</script><script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script></head>
+<body><div class="page"><nav><strong>Part II · Contents</strong><a class="main" href="#part-ii-overview">Part II Overview</a><a class="main" href="#genai-model-development">4. GenAI Model Development</a><a class="sub" href="#business-purpose-intended-use-and-development-scope">4.1
+Business purpose, intended use, and development scope</a><a class="sub" href="#data-preparation-and-data-design">4.2 Data preparation and data
+design</a><a class="sub" href="#modelsystem-structure-and-components">4.3 Model/system structure
+and components</a><a class="sub" href="#technical-foundation-from-text-to-tokens">4.4 Technical
+foundation: from text to tokens</a><a class="sub" href="#transformer-and-self-attention">4.5 Transformer and
+self-attention</a><a class="sub" href="#feed-forward-network-residual-computation-and-stacked-blocks">4.6
+Feed-forward network, residual computation, and stacked blocks</a><a class="sub" href="#pre-training-objective-and-model-fitting">4.7 Pre-training
+objective and model fitting</a><a class="sub" href="#model-and-component-selection-conceptual-soundness">4.8 Model
+and component selection / conceptual soundness</a><a class="sub" href="#rag-development">4.9 RAG development</a><a class="sub" href="#fine-tuning-instruction-tuning-alignment-and-outcome-analysis">4.10
+Fine-tuning, instruction tuning, alignment, and outcome analysis</a><a class="sub" href="#overfitting-memorization-and-generalization">4.11 Overfitting,
+memorization, and generalization</a><a class="sub" href="#model-performance-quality-and-robustness-testing">4.12 Model
+performance, quality, and robustness testing</a><a class="sub" href="#development-testing-should-also-include-explicit-compliance-biasfairness-sensitivity-and-stress-testing.-compliance-tests-should-challenge-applicable-legal-regulatory-policy-disclosure-recordkeeping-suitability-approval-and-permission-requirements.-sensitivity-tests-should-vary-prompts-decoding-parameters-model-versions-retrieval-settings-context-construction-and-relevant-operating-environments.-stress-tests-should-examine-unusually-long-or-conflicting-context-large-retrieval-sets-component-outages-malformed-tool-responses-high-transaction-volume-and-adversarial-inputs.">Development
+testing should also include explicit compliance, bias/fairness,
+sensitivity, and stress testing. Compliance tests should challenge
+applicable legal, regulatory, policy, disclosure, recordkeeping,
+suitability, approval, and permission requirements. Sensitivity tests
+should vary prompts, decoding parameters, model versions, retrieval
+settings, context construction, and relevant operating environments.
+Stress tests should examine unusually long or conflicting context, large
+retrieval sets, component outages, malformed tool responses, high
+transaction volume, and adversarial inputs.</a><a class="sub" href="#self-identified-model-risk-issues-and-mitigation">4.13
+Self-identified model risk issues and mitigation</a><a class="sub" href="#legalcompliance-and-intellectual-propertycopyright-risks-should-be-identified-explicitly.-controls-may-include-approved-use-policies-legal-review-source-licensing-and-provenance-checks-copyright-sensitive-output-testing-citation-requirements-disclosure-and-recordkeeping-rules-and-escalation-where-ownership-or-permitted-use-is-uncertain.">Legal/compliance
+and intellectual-property/copyright risks should be identified
+explicitly. Controls may include approved-use policies, legal review,
+source licensing and provenance checks, copyright-sensitive output
+testing, citation requirements, disclosure and recordkeeping rules, and
+escalation where ownership or permitted use is uncertain.</a><a class="sub" href="#definitions.-hallucination-is-unsupported-or-fabricated-content-presented-as-if-reliable.-stale-knowledge-is-reliance-on-information-that-is-no-longer-current.-prompt-sensitivity-is-material-output-instability-under-meaning-preserving-prompt-changes.-confidential-data-risk-is-unauthorized-exposure-retention-or-reproduction-of-protected-information.-prompt-injection-is-manipulation-of-model-instructions-through-malicious-direct-or-retrieved-content.-numerical-weakness-is-unreliable-arithmetic-or-quantitative-reasoning-when-a-deterministic-calculation-is-required.-excessive-agency-is-the-ability-of-an-ai-system-to-take-actions-or-invoke-tools-beyond-the-level-of-autonomy-justified-by-the-use-case-and-controls.">Definitions.
+Hallucination is unsupported or fabricated content presented as if
+reliable. Stale knowledge is reliance on information that is no longer
+current. Prompt sensitivity is material output instability under
+meaning-preserving prompt changes. Confidential-data risk is
+unauthorized exposure, retention, or reproduction of protected
+information. Prompt injection is manipulation of model instructions
+through malicious direct or retrieved content. Numerical weakness is
+unreliable arithmetic or quantitative reasoning when a deterministic
+calculation is required. Excessive agency is the ability of an AI system
+to take actions or invoke tools beyond the level of autonomy justified
+by the use case and controls.</a><a class="sub" href="#development-documentation-maintenance-and-monitoring">4.14
+Development documentation, maintenance, and monitoring</a><a class="sub" href="#case-study-4-a-google-gemma-3-model-development-and-mrm-assessment-for-reading-materials">Case
+Study 4-A — Google Gemma 3: Model Development and MRM Assessment for
+reading materials</a><a class="main" href="#genai-model-validation">5. GenAI Model Validation</a><a class="sub" href="#relationship-to-traditional-mrm">5.1 Relationship to traditional
+MRM</a><a class="sub" href="#validation-object-and-validation-boundary">5.2 Validation object
+and validation boundary</a><a class="sub" href="#validation-procedure">5.3 Validation procedure</a><a class="sub" href="#risk-based-validation-planning">5.4 Risk-based validation
+planning</a><a class="sub" href="#model-and-system-selection-conceptual-soundness">5.5 Model and
+system selection / conceptual soundness</a><a class="sub" href="#vendor-foundation-models-and-third-party-genai-services.-most-financial-institutions-will-use-at-least-one-third-party-foundation-model-hosted-api-embedding-model-vector-database-safety-service-or-other-external-component.-vendor-use-does-not-transfer-model-risk-accountability.-validation-should-assess-vendor-technical-documentation-model-cards-training-data-disclosures-and-limitations-evaluation-evidence-versioning-and-change-notification-practices-security-and-privacy-commitments-data-retention-and-training-use-terms-geographicdata-residency-constraints-incident-history-service-dependencies-concentration-and-substitution-risk-and-contractual-auditaccess-rights.-where-proprietary-restrictions-prevent-full-transparency-the-institution-should-document-the-information-gap-and-compensate-with-stronger-independent-empirical-testing-tighter-operating-limits-monitoring-fallback-arrangements-and-change-controls.">Vendor
+foundation models and third-party GenAI services. Most financial
+institutions will use at least one third-party foundation model, hosted
+API, embedding model, vector database, safety service, or other external
+component. Vendor use does not transfer model-risk accountability.
+Validation should assess vendor technical documentation, model cards,
+training-data disclosures and limitations, evaluation evidence,
+versioning and change-notification practices, security and privacy
+commitments, data-retention and training-use terms,
+geographic/data-residency constraints, incident history, service
+dependencies, concentration and substitution risk, and contractual
+audit/access rights. Where proprietary restrictions prevent full
+transparency, the institution should document the information gap and
+compensate with stronger independent empirical testing, tighter
+operating limits, monitoring, fallback arrangements, and change
+controls.</a><a class="sub" href="#independent-test-design-how-to-build-a-usable-test-suite">5.6
+Independent test design: how to build a usable test suite</a><a class="sub" href="#adaptiverecursive-change-testing.-where-a-system-can-autonomously-revise-code-prompts-tools-policies-memory-or-model-components-validation-should-test-authority-boundaries-approval-gates-rollback-monitoring-and-whether-iterative-changes-can-compound-errors-or-bypass-controls.-ordinary-vendor-model-updates-are-change-managementversion-risk-rather-than-recursive-self-improvement-unless-the-deployed-system-itself-can-initiate-or-implement-material-self-modification.">Adaptive/recursive-change
+testing. Where a system can autonomously revise code, prompts, tools,
+policies, memory, or model components, validation should test authority
+boundaries, approval gates, rollback, monitoring, and whether iterative
+changes can compound errors or bypass controls. Ordinary vendor model
+updates are change-management/version risk rather than recursive
+self-improvement unless the deployed system itself can initiate or
+implement material self-modification.</a><a class="sub" href="#the-genai-validation-vector">5.7 The GenAI Validation
+Vector</a><a class="sub" href="#task-accuracy-and-outcome-analysis">5.8 Task accuracy and
+outcome analysis</a><a class="sub" href="#factuality-and-hallucination-testing">5.9 Factuality and
+hallucination testing</a><a class="sub" href="#rag-validation-retrieval-grounding-and-citation">5.10 RAG
+validation: retrieval, grounding, and citation</a><a class="sub" href="#robustness-and-prompt-sensitivity">5.11 Robustness and prompt
+sensitivity</a><a class="sub" href="#bias-fairness-and-representativeness">5.12 Bias, fairness, and
+representativeness</a><a class="sub" href="#privacy-and-memorization-testing">5.13 Privacy and memorization
+testing</a><a class="sub" href="#cybersecurity-and-adversarial-testing">5.14 Cybersecurity and
+adversarial testing</a><a class="sub" href="#agentic-ai-and-tool-use-validation">5.15 Agentic AI and tool-use
+validation</a><a class="sub" href="#implementation-verification">5.16 Implementation
+verification</a><a class="sub" href="#effective-challenge">5.17 Effective challenge</a><a class="sub" href="#validation-limitations-and-residual-risk">5.18 Validation
+limitations and residual risk</a><a class="sub" href="#validation-conclusion-and-approval-taxonomy">5.19 Validation
+conclusion and approval taxonomy</a><a class="sub" href="#independent-validation-work-program">5.20 Independent validation
+work program</a><a class="sub" href="#table-5-b-summarizes-the-expected-challenge-remediation-and-closure-record-for-validation-findings.">Table
+5-B summarizes the expected challenge, remediation, and closure record
+for validation findings.</a><a class="sub" href="#section"></a><a class="sub" href="#performance-monitoring-handoff">5.21 Performance-monitoring
+handoff</a><a class="sub" href="#case-study-5-a-anthropic-claude-evaluation-external-testing-and-mrm-assessment">Case
+Study 5-A — Anthropic Claude: Evaluation, External Testing, and MRM
+Assessment</a><a class="main" href="#part-ii-summary">Part II Summary</a><a class="main" href="#part-ii-references-and-further-reading">Part II References and
+Further Reading</a></nav><article><div class="topline">Supplemental Chapter · Model Risk Management</div><div class="reading-info">Part II — GenAI Model Development and Independent Model Validation · Version 6</div>
+
+<p><em>A Supplemental Chapter to Principles and Practices of Model Risk
+Management</em></p>
+<p><strong>PART II — GenAI Model Development and Independent Model
+Validation</strong></p>
+<p><em>Revised Version 6 — second-round editorial revision; author
+comments incorporated</em></p>
+<h1 id="part-ii-overview">Part II Overview</h1>
+<p>Part II has two purposes. First, it explains how a GenAI model/system
+is developed. Second, it explains how an independent validator should
+validate the completed system. The two processes are related, but they
+should not be mixed. Development is the responsibility of the first line
+of defense, model developer and business owner. Validation is the
+responsibility of the second line of defense, an independent challenge
+function of the development process, the model/system, its performance,
+its implementation, and its controls.</p>
+<p>The intended reader has basic training in statistics and quantitative
+modeling but does not need formal training in artificial intelligence.
+The discussion therefore uses the traditional model-development
+sequence—data, model structure, model selection, fitting, testing,
+tuning, limitations, controls, and monitoring—and then shows what
+changes when the model is a GenAI system.</p>
+<p>It is important to emphasize it takes village to develop and validate
+a Gen AI as it takes more than a standard alone model</p>
+<table>
+<colgroup>
+<col style="width: 100%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Part II organizing principle.</strong> A GenAI validator
+should not validate only the foundation model. The validation object is
+the risk-bearing AI system: model, data, prompts, retrieval, tools,
+guardrails, workflow, implementation, users, and intended use.</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<h1 id="genai-model-development">4. GenAI Model Development</h1>
+<p>A GenAI development process is more complex than the development of
+most traditional statistical models, but the basic discipline is
+familiar. A developer still needs to define the business purpose,
+prepare data, select a model structure, estimate or configure the model,
+test performance, identify limitations, establish controls, define
+ongoing performance monitoring, and maintain the model after
+deployment.</p>
+<p>A practical development process is shown below.</p>
+<table>
+<colgroup>
+<col style="width: 6%"/>
+<col style="width: 8%"/>
+<col style="width: 7%"/>
+<col style="width: 12%"/>
+<col style="width: 9%"/>
+<col style="width: 9%"/>
+<col style="width: 6%"/>
+<col style="width: 8%"/>
+<col style="width: 9%"/>
+<col style="width: 19%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>1. Purpose &amp; scope</th>
+<th>2. Data preparation</th>
+<th>3. System structure</th>
+<th>4. Model/component selection</th>
+<th>5. Training &amp; configuration</th>
+<th>6. Development test, Performance testing</th>
+<th>7. Fine-tuning &amp; controls</th>
+<th>8. Validation, approval &amp; deployment</th>
+<th>9. Monitoring &amp; maintenance</th>
+<th>10. Change management, model enhancement/decommission</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<h2 id="business-purpose-intended-use-and-development-scope">4.1
+Business purpose, intended use, and development scope</h2>
+<p>Development should begin with business need, not with the technology.
+The developer should state what the GenAI system is expected to do, who
+will use it, what decisions it may influence, what data it may access,
+and what it is not permitted to do. A summarization assistant, a policy
+Q&amp;A system, a coding assistant, and an agent that can execute
+transactions are different development problems even if they use the
+same foundation model.</p>
+<p>This first step also determines the appropriate system boundary. For
+GenAI, the model weights alone rarely describe the complete product. The
+developer should identify the components that materially affect behavior
+and risk.</p>
+<h2 id="data-preparation-and-data-design">4.2 Data preparation and data
+design</h2>
+<p>Data are part of model development, not an activity that occurs only
+before development. Part I discusses GenAI data risk in detail. Here the
+focus is narrower: what data decisions must be made in order to develop
+the system.</p>
+<p>The developer should identify and test, as applicable:</p>
+<ul>
+<li><p>pre-training data and known limitations of the foundation model
+provider;</p></li>
+<li><p>fine-tuning or instruction-tuning data;</p></li>
+<li><p>preference/alignment data;</p></li>
+<li><p>development, test, and evaluation samples;</p></li>
+<li><p>RAG documents, metadata, embeddings, and retrieval
+indexes;</p></li>
+<li><p>runtime prompts, conversation history, and tool/API data;
+and</p></li>
+<li><p>production feedback that may later be used for tuning or
+evaluation.</p></li>
+</ul>
+<p>For each material dataset, the developer should consider provenance,
+representativeness, quality, legal right to use, privacy, contamination,
+sampling design, transformations, and the separation of development from
+testing. This connects directly to Part I: data risk is not separate
+from model risk because the data determine what the model learns, what
+it retrieves, and what information it sees at inference time.</p>
+<h2 id="modelsystem-structure-and-components">4.3 Model/system structure
+and components</h2>
+<p>Before model selection, the developer should describe the system to
+be built. A useful representation is:</p>
+<p><span class="math inline">\(S = (W,D,P,R,T,G,U,\varepsilon)\)</span>
+(4.1)</p>
+<p>where W is the foundation model and model version; D is development
+and runtime data; P is the prompt and configuration structure; R is
+retrieval/RAG; T is tools and external actions; G is guardrails
+(regulations, laws) and permissions; U is the use environment, including
+users and workflow; and ε represents stochastic generation effects.</p>
+<p>Equation (4.1) is important because it shows that GenAI development
+is partly model development and partly system engineering. The same
+foundation model can produce materially different outcomes when P, R, T,
+G, or U changes.</p>
+<h2 id="technical-foundation-from-text-to-tokens">4.4 Technical
+foundation: from text to tokens</h2>
+<p>Before tokenization and Transformer mechanics, it is useful to
+distinguish LLM fitting from traditional model estimation. In a
+regression or other parametric model, the analyst often estimates a
+relatively small parameter vector with an explicit statistical
+interpretation. An LLM instead contains a very large neural-network
+parameter vector—often billions of learned weights—distributed across
+embeddings, attention projections, feed-forward layers, normalization
+parameters, and related components. These parameters are fitted jointly
+from very large token datasets by minimizing a training loss with
+gradient-based optimization. The training loss is a numerical objective
+measuring the discrepancy between the model's predicted probability
+distribution and the observed training tokens; for autoregressive
+pre-training it is commonly token-level cross-entropy, equivalently
+negative log-likelihood. Individual parameters generally do not have
+standalone business interpretations; validation therefore focuses more
+on architecture, objective, data, empirical behavior, controls, and
+use-case performance than on coefficient-by-coefficient
+interpretation.</p>
+<p>A useful abstraction is to collect the trainable parameters in a
+high-dimensional parameter set:</p>
+<p><span class="math display">\[\theta = \left\{
+W_{E},W_{Q},W_{K},W_{V},W_{O},W_{1},W_{2},\ldots \right\}\]</span></p>
+<p>In this notation, W_E denotes the token-embedding parameters; W_Q,
+W_K, and W_V are the learned query, key, and value projection matrices
+used in self-attention; W_O is the learned attention output-projection
+matrix; and W_1, W_2, … denote learned weight matrices in feed-forward
+and other neural-network layers.</p>
+<p>Given a training corpus containing N token sequences, training seeks
+parameters that minimize empirical loss over the corpus:</p>
+<p><span class="math display">\[\widehat{\theta} =
+\underset{\theta}{arg\, min}\mspace{6mu}\frac{1}{N}\sum_{i =
+1}^{N}\mathcal{L}\left( x^{(i)};\theta \right)\]</span></p>
+<p>For next-token pre-training, the per-sequence loss is commonly
+cross-entropy/negative log-likelihood:</p>
+<p><span class="math display">\[\mathcal{L}(x;\theta) = - \sum_{t =
+1}^{n}\log P_{\theta}\left( x_{t} \mid x_{&lt; t} \right)\]</span></p>
+<p>Gradient-based optimization then updates the parameters iteratively.
+In simplified gradient-descent form:</p>
+<p><span class="math display">\[\theta_{k + 1} = \theta_{k} -
+\eta_{k}\nabla_{\theta}\mathcal{L}\left( \theta_{k} \right)\]</span></p>
+<p>Here η_k is the learning rate at iteration k. Practical LLM
+optimizers use adaptive learning rates, momentum-like mechanisms,
+regularization, mini-batching, distributed computation, and
+mixed-precision training. The important MRM distinction is that this is
+still parameter fitting, but at a scale and level of nonlinearity where
+traditional coefficient diagnostics are no longer sufficient.</p>
+<p>Tokenization and the Transformer are technical components inside the
+development process. They are included here because a developer—and
+later a validator—needs enough understanding of the foundation model to
+assess conceptual soundness.</p>
+<p>An LLM does not directly process a sentence as a human reads it. A
+tokenizer first converts text into discrete tokens. A token may be a
+word, part of a word, punctuation mark, number, or other symbol. Each
+token identifier is then mapped to a numerical vector called an
+embedding:</p>
+<p><span class="math inline">\(x_{i} \rightarrow e_{i} \in
+\mathbb{R}^{d}\)</span> (4.2)</p>
+<p>Here xᵢ is token i, eᵢ is its embedding vector, ℝᵈ is a d-dimensional
+real-valued vector space, and d is the embedding or hidden dimension. In
+modern LLMs, d is commonly in the thousands and varies by architecture.
+The exact size is less important for MRM than the implication: each
+token is represented by many numerical features rather than by one
+human-interpretable variable.</p>
+<h2 id="transformer-and-self-attention">4.5 Transformer and
+self-attention</h2>
+<p>The Transformer architecture was introduced by Vaswani et al. (2017).
+Its central mechanism is attention. At a simplified level, the current
+token representations X are projected into Query, Key, and Value
+matrices:</p>
+<p><span class="math inline">\(Q = XW_{Q},\quad\quad K =
+XW_{K},\quad\quad V = XW_{V}\)</span> (4.3)</p>
+<p>A Query represents what information a token is looking for; a Key
+represents what information another token offers for matching; and a
+Value contains the information passed forward when that token receives
+attention. The projection matrices W_Q, W_K, and W_V are not calculated
+anew at inference time. They are learned model parameters. During
+pre-training, they are initialized and then updated by backpropagation
+and gradient-based optimization to reduce the training loss. At
+inference, the learned matrices are fixed for a given model version and
+are multiplied by the current hidden-state matrix X to produce Q, K, and
+V.</p>
+<p><span class="math inline">\(Attention(Q,K,V) = softmax\left(
+\frac{QK^{T}}{\sqrt{d_{k}}} \right)V\)</span> (4.4)</p>
+<p>QKᵀ is the matrix of query-key compatibility scores. The superscript
+T means matrix transpose. dₖ is the dimension of the key vectors.
+Dividing by √dₖ keeps the dot products from becoming excessively large
+as dimension increases.</p>
+<p><span class="math inline">\(softmax\left( z_{i} \right) =
+\frac{e^{z_{i}}}{\sum_{j}^{}e^{z_{j}}}\)</span> (4.5)</p>
+<p><em>( j&lt;&gt; i</em>, in 4.5?) Softmax converts a row of raw scores
+into positive weights that sum to one. For example, raw scores [1, 2, 3]
+become approximately [0.09, 0.24, 0.67]. Attention therefore works like
+a context-dependent weighted average: the model gives more weight to
+tokens judged more relevant to the current token.</p>
+<p>Multi-head attention applies this calculation several times with
+different learned projections:</p>
+<p><span class="math inline">\({head}_{h} = Attention\left(
+XW_{Q}^{(h)},XW_{K}^{(h)},XW_{V}^{(h)} \right)\)</span> (4.6)</p>
+<p><span class="math inline">\(MHA(X) = Concat\left(
+{head}_{1},\ldots,{head}_{H} \right)W_{O}\)</span> (4.7)</p>
+<p>Concat means that the output vectors from the H attention heads are
+placed side by side to form one larger representation. W₀ (more commonly
+written W_O) is a learned output-projection matrix that maps the
+concatenated result back to the model's working dimension. Multiple
+heads allow the model to represent different relationships at the same
+time. Individual heads, however, should not automatically be assigned
+simple human meanings.</p>
+<p>Purpose of the Transformer and self-attention. The Transformer
+provides a scalable way to represent context and dependencies among
+tokens without relying on strictly sequential recurrence. Self-attention
+allows each token representation to condition on other relevant tokens
+in the permitted context. This is essential for language because the
+meaning of a word, number, pronoun, or instruction often depends on
+context elsewhere in the prompt. In an autoregressive LLM, causal
+masking prevents the representation at position i from attending to
+future positions j &gt; i. During training, this prevents leakage of the
+token the model is supposed to predict; during generation, it preserves
+the left-to-right next-token structure. The practical MRM implication is
+that output behavior is context-dependent: changing prompt wording,
+ordering, retrieved context, or system instructions can change attention
+patterns and therefore model output even when model weights are
+unchanged.</p>
+<h2 id="feed-forward-network-residual-computation-and-stacked-blocks">4.6
+Feed-forward network, residual computation, and stacked blocks</h2>
+<p>After attention mixes information across tokens, a feed-forward
+neural network—often called a multilayer perceptron (MLP)—transforms
+each token representation.</p>
+<p><span class="math inline">\(MLP(x) = W_{2}\,\phi\left( W_{1}x + b_{1}
+\right) + b_{2}\)</span> (4.8)</p>
+<p>In Equation (4.8), x is the token representation entering the MLP; W₁
+and W₂ are learned weight matrices; b₁ and b₂ are bias vectors; and φ is
+a nonlinear activation function such as Gaussian Error Linear Unit
+(GELU). The first layer commonly expands the representation into a
+larger hidden space; the nonlinear function transforms it; and the
+second layer projects it back. Attention can be viewed as information
+mixing across tokens, while the MLP performs nonlinear transformation
+within each token position.</p>
+<p>Residual connections preserve the previous representation while
+adding the new transformation. Normalization helps stabilize the
+computation. Many Transformer blocks are stacked. The final behavior
+therefore emerges from repeated high-dimensional nonlinear
+transformations. Unlike a regression coefficient, an individual
+neural-network parameter normally has no standalone business
+interpretation.</p>
+<h2 id="pre-training-objective-and-model-fitting">4.7 Pre-training
+objective and model fitting</h2>
+<p>For an autoregressive LLM, model fitting during pre-training is
+commonly based on next-token prediction. Given tokens x₁,…,xₙ, a
+simplified negative log-likelihood loss is:</p>
+<p><span class="math inline">\(\mathcal{L}(\theta) = - \sum_{t = 1}^{n -
+1}\log P_{\theta}\left( x_{t + 1} \mid x_{1},\ldots,x_{t}
+\right)\)</span> (4.9)</p>
+<p>θ denotes the model parameters. For an autoregressive model, the
+training loss is typically the average negative log-likelihood
+(equivalently, token-level cross-entropy) of the observed next tokens
+under the model. If the model assigns probability pθ(x_t | x_&lt;t) to
+the observed token x_t, its contribution to loss is −log pθ(x_t |
+x_&lt;t). A high probability assigned to the correct next token produces
+a small loss; a low probability produces a large loss. Training uses
+backpropagation to compute gradients of this loss with respect to θ and
+an optimizer such as Adam/AdamW to update the parameters. The objective
+is statistical prediction of tokens—not direct optimization of
+factuality, compliance, fairness, or business utility.</p>
+<table>
+<colgroup>
+<col style="width: 100%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>MRM Principle 4-A — Training objective ≠ business
+objective.</strong> Next-token prediction is not the same objective as
+factual correctness, regulatory compliance, fairness, suitability, or a
+correct bank decision. Development must identify this gap and add
+testing and controls appropriate to the business objective.</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<h2 id="model-and-component-selection-conceptual-soundness">4.8 Model
+and component selection / conceptual soundness</h2>
+<p>Model selection in GenAI is not simply a choice among several
+foundation models. It can involve the complete system in Equation (4.1).
+The developer may need to select the foundation model and version,
+vendor update/version policy, hosting method, context-window size,
+embedding model, retrieval method, reranker, prompt structure, tool
+architecture, guardrails, and degree of human oversight. Update
+frequency is therefore a design and governance choice: frequent
+vendor/model updates may improve model capability but increase change
+risk, while pinned versions improve reproducibility but may delay
+security or capability improvements.</p>
+<table>
+<colgroup>
+<col style="width: 49%"/>
+<col style="width: 50%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>GenAI component / selection dimension</th>
+<th>Examples of development questions</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Foundation model / LLM</td>
+<td>Capability, domain performance, cost, latency, context length,
+privacy, vendor transparency, update frequency and method, version
+stability</td>
+</tr>
+<tr class="even">
+<td>Adaptation</td>
+<td>Use base model, supervised fine-tuning, preference tuning, adapters,
+or prompt-only configuration?</td>
+</tr>
+<tr class="odd">
+<td>RAG</td>
+<td>Is external knowledge needed? Which knowledge base, embedding model,
+chunking, retrieval and reranking approach?</td>
+</tr>
+<tr class="even">
+<td>Tools</td>
+<td>Are calculations/search/database/API actions needed? Read-only or
+write access?</td>
+</tr>
+<tr class="odd">
+<td>Prompt architecture</td>
+<td>What system instructions, templates, context construction, and
+refusal rules are required?</td>
+</tr>
+<tr class="even">
+<td>Guardrails</td>
+<td>What deterministic controls, filters, permissions, or human gates
+are required?</td>
+</tr>
+<tr class="odd">
+<td>Deployment</td>
+<td>Hosted API, private cloud, on-premise/open-weight model, or hybrid
+design?</td>
+</tr>
+</tbody>
+</table>
+<p>Conceptual soundness asks whether these choices are appropriate for
+the intended use. A more capable model is not automatically the better
+model. The selected system should provide enough capability while
+remaining controllable, testable, secure, and economically
+reasonable.</p>
+<h2 id="rag-development">4.9 RAG development</h2>
+<p>Retrieval-Augmented Generation (RAG) combines an LLM with external
+information retrieved at inference time. RAG should not be treated as an
+unlimited or undefined information channel. For controlled
+financial-institution use, the approved retrieval scope should be
+defined by source classes, ownership, jurisdiction, access entitlement,
+freshness requirements, and permitted external resources. Open-web
+search or user-supplied content may be allowed for some use cases, but
+only as explicitly governed source classes with additional provenance,
+poisoning, confidentiality, misinformation, and prompt-injection
+controls. A reproducible RAG design therefore requires more detail than
+saying that documents are 'added to the model.' A simplified development
+process is:</p>
+<p>For governance purposes, the pipeline can be organized into four
+stages: (1) knowledge-source governance—authorize sources, parse and
+clean content, chunk text, and attach metadata; (2) indexing—embed
+chunks and store/version the index; (3) retrieval—embed the query,
+retrieve top-k candidates, apply entitlement filters, and rerank; and
+(4) generation and verification—construct the prompt, generate the
+answer, cite sources, and verify or abstain where evidence is
+inadequate.( I would not use the word corpus, as it is more like an AI
+work instead of a commonly used word)</p>
+<table>
+<colgroup>
+<col style="width: 10%"/>
+<col style="width: 6%"/>
+<col style="width: 6%"/>
+<col style="width: 8%"/>
+<col style="width: 7%"/>
+<col style="width: 10%"/>
+<col style="width: 7%"/>
+<col style="width: 7%"/>
+<col style="width: 10%"/>
+<col style="width: 7%"/>
+<col style="width: 8%"/>
+<col style="width: 9%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>1. Authorize documents</th>
+<th>2. Parse &amp; clean</th>
+<th>3. Chunk</th>
+<th>4. Add metadata</th>
+<th>5. Embed chunks</th>
+<th>6. Store/index</th>
+<th>7. Embed query</th>
+<th>8. Retrieve top-k</th>
+<th>9. Rerank/filter</th>
+<th>10. Build prompt</th>
+<th>11. Generate</th>
+<th>12. Cite/verify</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<p>The twelve RAG steps are grouped below into four control stages to
+improve readability: knowledge-source governance; indexing; retrieval;
+and generation/verification.</p>
+<p>The approved knowledge base D is first controlled for ownership,
+effective date, confidentiality, and access rights. Documents and other
+authorized sources are parsed and divided into chunks. Each chunk
+receives metadata such as source, date, document type, jurisdiction, and
+access entitlement. An embedding model converts chunks into vectors that
+are stored in a searchable index. At runtime, the user's query q is also
+embedded; the retriever identifies candidate chunks; filters enforce
+permissions; a reranker may improve ordering; and selected context C_q
+is inserted into the prompt.</p>
+<p><span class="math inline">\(q \rightarrow E(q) \rightarrow
+Retrieve(D,k) \rightarrow C_{q} \rightarrow LLM\left( q,C_{q} \right)
+\rightarrow y\)</span> (4.10)</p>
+<p>Here E(q) is the query embedding, k is the number of retrieved
+candidates, Cq is the context passed to the LLM, and y is the generated
+response. A third party should be able to reproduce the design if the
+developer documents the corpus/version, parser, chunking rules,
+metadata, embedding model/version, similarity measure, retrieval
+parameters, filters, reranker, top-k setting, prompt template, generator
+version, and citation logic.</p>
+<p>RAG can improve freshness and grounding, but it redistributes model
+risk. A failure can come from the corpus, parsing, chunking, metadata,
+embedding, retrieval, reranking, prompt construction, generation, or
+citation. For this reason RAG should be developed and tested as a
+pipeline, not treated as a simple add-on.</p>
+<p>What qualifies as RAG documentation? RAG is not limited to formal
+policy manuals. A controlled retrieval knowledge base may include
+policies and procedures, regulatory text, product manuals, contracts,
+research, knowledge-base articles, approved FAQs, database records,
+structured tables, code repositories, or other authoritative enterprise
+content. The key MRM question is not the file format but whether the
+source is appropriate, authorized, current, traceable,
+access-controlled, and suitable for the use case. Uncontrolled web
+search or user-uploaded material can also provide retrieval context, but
+it carries materially different provenance, poisoning, confidentiality,
+and reliability risks and should be governed accordingly.</p>
+<table>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>RAG function</strong></th>
+<th><strong>Key control issue</strong></th>
+<th><strong>Interconnection with primary model</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Knowledge-source governance</td>
+<td>Authority, provenance, effective date, confidentiality,
+entitlements, poisoning risk</td>
+<td>Determines what external evidence the LLM is permitted to see; weak
+sources can cause grounded but wrong answers.</td>
+</tr>
+<tr class="even">
+<td>Parsing / chunking / metadata</td>
+<td>Loss of context, malformed extraction, chunk size,
+jurisdiction/effective-date tags</td>
+<td>Shapes the units presented to the retriever and therefore the
+evidence available to the LLM.</td>
+</tr>
+<tr class="odd">
+<td>Embedding / indexing</td>
+<td>Embedding-model suitability, versioning, index completeness and
+reproducibility</td>
+<td>Controls semantic representation of knowledge; changes can alter
+retrieved context without changing LLM weights.</td>
+</tr>
+<tr class="even">
+<td>Retrieval / reranking</td>
+<td>Recall@k, precision@k, stale/conflicting sources, permission
+filtering</td>
+<td>Selects the context that conditions generation; retrieval failure
+can be mistaken for model hallucination.</td>
+</tr>
+<tr class="odd">
+<td>Prompt construction</td>
+<td>Instruction hierarchy, context ordering, token limits, injection
+separation</td>
+<td>Combines retrieved evidence with system/user instructions and can
+materially alter model behavior.</td>
+</tr>
+<tr class="even">
+<td>Generation / citation / abstention</td>
+<td>Groundedness, citation accuracy, unsupported claims, refusal when
+evidence is insufficient</td>
+<td>Primary model converts retrieved evidence into output; controls
+should prevent confident answers when support is inadequate.</td>
+</tr>
+<tr class="odd">
+<td>Monitoring / change control</td>
+<td>Source updates, index rebuilds, embedding/reranker/model
+changes</td>
+<td>RAG changes can change effective model behavior and may trigger
+regression testing or revalidation.</td>
+</tr>
+</tbody>
+</table>
+<p>Table 4-A summarizes the principal RAG functions, control issues, and
+their interconnection with the primary model.</p>
+<h2 id="fine-tuning-instruction-tuning-alignment-and-outcome-analysis">4.10
+Fine-tuning, instruction tuning, alignment, and outcome analysis</h2>
+<p>A pretrained model may be adapted through supervised fine-tuning,
+preference-based methods, system prompts, or other alignment techniques.
+The development record should state why adaptation is needed, what data
+are used, what behavior is expected to improve, and what behavior may
+deteriorate.</p>
+<p>Fine-tuning should be followed by outcome analysis. The developer
+should compare the adapted system with the pre-adaptation baseline,
+examine performance by important use-case segments, and test for
+unintended changes in factuality, safety, refusal behavior, privacy, and
+robustness.</p>
+<p>Fine-tuning is model-parameter adaptation: at least some model
+weights are updated using additional training data. It differs from
+prompt engineering or RAG, which can change system behavior without
+changing foundation-model weights. A disciplined fine-tuning loop is:
+define target behavior and baseline; curate and split
+adaptation/evaluation data; select the tuning method and trainable
+parameters; train while monitoring loss and validation metrics; evaluate
+against held-out and challenge sets; compare against the baseline;
+analyze regressions and safety effects; revise data/hyperparameters if
+necessary; freeze/version the accepted checkpoint; and document residual
+limitations. The stage should output a reproducible model checkpoint or
+adapter, training-data lineage, hyperparameters, learning curves,
+comparative evaluation results, regression findings, and an explicit
+go/no-go decision for the next development stage.</p>
+<p>Figure 4-A summarizes the fine-tuning, instruction-tuning, alignment,
+and outcome-analysis loop.</p>
+<h2 id="overfitting-memorization-and-generalization">4.11 Overfitting,
+memorization, and generalization</h2>
+<p>This supplement contains a separate technical section on LLM
+overfitting, memorization, and generalization. The development process
+should refer to that section rather than repeat the full discussion
+here.</p>
+<p>For development purposes, strong performance on development or
+familiar benchmarks should not be assumed to represent generalization.
+Developers should use held-out and newly created tests, temporal
+holdouts where appropriate, contamination checks,
+paraphrased/counterfactual cases, and tests for exact or near-exact
+reproduction of sensitive material. A separate technical subsection on
+LLM overfitting, memorization, and generalization is appropriate because
+these topics require more depth than can be provided in the development
+workflow. The companion technical resource “LLM Overfitting,
+Generalization and MRM” should be cross-referenced from the
+supplemental-chapter resources page.</p>
+<h2 id="model-performance-quality-and-robustness-testing">4.12 Model
+performance, quality, and robustness testing</h2>
+<p>Before a GenAI system is submitted for independent validation, the
+development team should perform its own testing. The exact measures
+depend on the use case, and a single accuracy number is rarely
+sufficient. Development testing should cover task performance,
+factuality and grounding, retrieval quality, robustness and prompt
+sensitivity, compliance, bias/fairness, privacy, cybersecurity,
+operational resilience, and human-outcome risk. It should also include
+sensitivity analysis across relevant configurations and environments and
+stress tests that deliberately push context length, retrieval volume,
+tool use, concurrency, ambiguity, and adversarial conditions beyond
+ordinary operation.</p>
+<p>Development testing should define measurable acceptance criteria
+before independent validation. Illustrative measures include: task
+accuracy or F1 for structured tasks; claim-level factual error rate;
+grounded-claim rate and citation precision; retrieval recall@k,
+precision@k and mean reciprocal rank for RAG; abstention
+precision/recall when evidence is missing; robustness failure rate under
+meaning-preserving perturbations; jailbreak or prompt-injection attack
+success rate; unauthorized-data/tool-action rate; latency and
+failure-rate percentiles; cost per successful task; and human override
+or material-omission rates. Metrics should be stratified by severity and
+use-case segment rather than reported only as portfolio averages.</p>
+<p>For stochastic outputs, the developer should repeat representative
+prompts and report distributions rather than a single run. A simple
+failure-rate estimate is p̂ = k/n, where k is the number of material
+failures in n independent or approximately independent trials.
+Confidence intervals or conservative upper bounds are useful when
+observed failures are rare, especially for high-consequence
+controls.</p>
+<table>
+<colgroup>
+<col style="width: 50%"/>
+<col style="width: 50%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Test area</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Task performance</td>
+<td>Accuracy, extraction error, classification metrics, completeness,
+business-rule correctness</td>
+</tr>
+<tr class="even">
+<td>Factuality / grounding</td>
+<td>Unsupported claims, source support, citation correctness, abstention
+when evidence is missing</td>
+</tr>
+<tr class="odd">
+<td>Robustness</td>
+<td>Paraphrases, typos, formatting changes, long context, distractors,
+multilingual inputs</td>
+</tr>
+<tr class="even">
+<td>RAG</td>
+<td>Recall/precision, stale documents, conflicting sources, permission
+filters, retrieval failure</td>
+</tr>
+<tr class="odd">
+<td>Safety / security</td>
+<td>Prompt injection, jailbreaks, data leakage, tool misuse</td>
+</tr>
+<tr class="even">
+<td>Operational</td>
+<td>Latency, failure rate, context/token limits, fallback behavior,
+cost</td>
+</tr>
+<tr class="odd">
+<td>Human outcome</td>
+<td>Reviewer overrides, material omissions, usability, automation-bias
+concerns</td>
+</tr>
+</tbody>
+</table>
+<h2 id="development-testing-should-also-include-explicit-compliance-biasfairness-sensitivity-and-stress-testing.-compliance-tests-should-challenge-applicable-legal-regulatory-policy-disclosure-recordkeeping-suitability-approval-and-permission-requirements.-sensitivity-tests-should-vary-prompts-decoding-parameters-model-versions-retrieval-settings-context-construction-and-relevant-operating-environments.-stress-tests-should-examine-unusually-long-or-conflicting-context-large-retrieval-sets-component-outages-malformed-tool-responses-high-transaction-volume-and-adversarial-inputs.">Development
+testing should also include explicit compliance, bias/fairness,
+sensitivity, and stress testing. Compliance tests should challenge
+applicable legal, regulatory, policy, disclosure, recordkeeping,
+suitability, approval, and permission requirements. Sensitivity tests
+should vary prompts, decoding parameters, model versions, retrieval
+settings, context construction, and relevant operating environments.
+Stress tests should examine unusually long or conflicting context, large
+retrieval sets, component outages, malformed tool responses, high
+transaction volume, and adversarial inputs.</h2>
+<h2 id="self-identified-model-risk-issues-and-mitigation">4.13
+Self-identified model risk issues and mitigation</h2>
+<p>A sound developer should not present the model as if no weaknesses
+exist. The development package should identify known limitations,
+explain their business importance, and state the controls used to reduce
+the risk.</p>
+<table>
+<colgroup>
+<col style="width: 50%"/>
+<col style="width: 50%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Known issue</th>
+<th>Illustrative mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Hallucination</td>
+<td>RAG, source citation, abstention rule, human review</td>
+</tr>
+<tr class="even">
+<td>Stale knowledge</td>
+<td>Controlled RAG knowledge base and effective-date metadata</td>
+</tr>
+<tr class="odd">
+<td>Prompt sensitivity</td>
+<td>Prompt templates, robustness tests, restricted input structure</td>
+</tr>
+<tr class="even">
+<td>Confidential-data risk</td>
+<td>Access controls, redaction, private deployment, logging
+restrictions</td>
+</tr>
+<tr class="odd">
+<td>Prompt injection</td>
+<td>Instruction/data separation, least privilege, deterministic
+permission controls</td>
+</tr>
+<tr class="even">
+<td>Numerical weakness</td>
+<td>Validated calculator/tool rather than free-form arithmetic</td>
+</tr>
+<tr class="odd">
+<td>Excessive agency</td>
+<td>Human approval, read-only tools, transaction limits, rollback</td>
+</tr>
+</tbody>
+</table>
+<h2 id="legalcompliance-and-intellectual-propertycopyright-risks-should-be-identified-explicitly.-controls-may-include-approved-use-policies-legal-review-source-licensing-and-provenance-checks-copyright-sensitive-output-testing-citation-requirements-disclosure-and-recordkeeping-rules-and-escalation-where-ownership-or-permitted-use-is-uncertain.">Legal/compliance
+and intellectual-property/copyright risks should be identified
+explicitly. Controls may include approved-use policies, legal review,
+source licensing and provenance checks, copyright-sensitive output
+testing, citation requirements, disclosure and recordkeeping rules, and
+escalation where ownership or permitted use is uncertain.</h2>
+<h2 id="definitions.-hallucination-is-unsupported-or-fabricated-content-presented-as-if-reliable.-stale-knowledge-is-reliance-on-information-that-is-no-longer-current.-prompt-sensitivity-is-material-output-instability-under-meaning-preserving-prompt-changes.-confidential-data-risk-is-unauthorized-exposure-retention-or-reproduction-of-protected-information.-prompt-injection-is-manipulation-of-model-instructions-through-malicious-direct-or-retrieved-content.-numerical-weakness-is-unreliable-arithmetic-or-quantitative-reasoning-when-a-deterministic-calculation-is-required.-excessive-agency-is-the-ability-of-an-ai-system-to-take-actions-or-invoke-tools-beyond-the-level-of-autonomy-justified-by-the-use-case-and-controls.">Definitions.
+Hallucination is unsupported or fabricated content presented as if
+reliable. Stale knowledge is reliance on information that is no longer
+current. Prompt sensitivity is material output instability under
+meaning-preserving prompt changes. Confidential-data risk is
+unauthorized exposure, retention, or reproduction of protected
+information. Prompt injection is manipulation of model instructions
+through malicious direct or retrieved content. Numerical weakness is
+unreliable arithmetic or quantitative reasoning when a deterministic
+calculation is required. Excessive agency is the ability of an AI system
+to take actions or invoke tools beyond the level of autonomy justified
+by the use case and controls.</h2>
+<h2 id="development-documentation-maintenance-and-monitoring">4.14
+Development documentation, maintenance, and monitoring</h2>
+<p>Development is not complete when the model first goes into
+production. Before deployment, the model/system should be documented,
+independently validated, approved under the applicable governance
+process, and equipped with defined monitoring and change controls. After
+deployment, the developer and model owner should maintain performance
+monitoring, vendor-release review, RAG knowledge-base maintenance,
+incident handling, and triggers for retesting or revalidation.</p>
+<table>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Development artifact</th>
+<th>What should be documented</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Use-case specification</td>
+<td>Users, decisions, prohibited uses, materiality</td>
+<td>Defines model purpose and scope</td>
+</tr>
+<tr class="even">
+<td>System architecture</td>
+<td>All components in Equation 4.1 and interactions</td>
+<td>Defines risk-bearing system</td>
+</tr>
+<tr class="odd">
+<td>Data lineage</td>
+<td>Development/adaptation/RAG/runtime data</td>
+<td>Supports quality, provenance and contamination review</td>
+</tr>
+<tr class="even">
+<td>Model/component selection</td>
+<td>Alternatives considered and rationale</td>
+<td>Supports conceptual soundness</td>
+</tr>
+<tr class="odd">
+<td>Training/configuration</td>
+<td>Parameters, prompts, tuning, decoding</td>
+<td>Supports reproducibility</td>
+</tr>
+<tr class="even">
+<td>RAG design</td>
+<td>Knowledge base, chunking, metadata, embeddings,
+retrieval/reranking</td>
+<td>Retrieval is part of model behavior</td>
+</tr>
+<tr class="odd">
+<td>Tools/agents</td>
+<td>Tools, permissions, action limits</td>
+<td>Determines consequence of error</td>
+</tr>
+<tr class="even">
+<td>Development testing</td>
+<td>Benchmarks, scenarios, robustness, limitations</td>
+<td>Evidence before independent validation</td>
+</tr>
+<tr class="odd">
+<td>Known issues/controls</td>
+<td>Limitations and mitigation</td>
+<td>Defines residual risk</td>
+</tr>
+<tr class="even">
+<td>Monitoring/maintenance</td>
+<td>Metrics, thresholds, changes, incidents</td>
+<td>Supports continued use</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col style="width: 100%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Development handoff to validation.</strong> The developer's
+job is to build and document a model/system that is fit for purpose and
+to identify its limitations. The validator's job is not to repeat
+development testing. The validator independently challenges the design,
+evidence, implementation, performance, and controls.</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<h2 id="case-study-4-a-google-gemma-3-model-development-and-mrm-assessment-for-reading-materials">Case
+Study 4-A — Google Gemma 3: Model Development and MRM Assessment for
+reading materials </h2>
+<p>Google's Gemma 3 provides a useful public case for illustrating the
+GenAI development process. The purpose of this case is not to conclude
+that Gemma is compliant with SR 26-2. Generative AI is outside the
+formal scope of SR 26-2. Rather, the case asks which publicly documented
+Gemma development practices are analogous to sound MRM principles and
+what a financial institution would still need to do for its own use.</p>
+<p>Gemma 3 is a family of open-weight multimodal models. Google's model
+card documents the model family, inputs and outputs, training-data
+categories and preprocessing, implementation information, benchmark
+evaluations, safety evaluations, limitations, and release-review
+practices. For example, the larger Gemma 3 variants use context windows
+up to 128K tokens; the 27B model was trained on 14 trillion tokens; and
+the training-data description includes web documents, code, mathematics,
+and images. Google also describes filtering of sensitive and harmful
+material.</p>
+<table>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Development step in Section 4</th>
+<th>Gemma 3 public evidence</th>
+<th>MRM observation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Purpose and model definition</td>
+<td>Model card identifies model family, input/output modalities, sizes,
+context limits and intended task categories.</td>
+<td>Provides a starting point for model scope, but does not define a
+bank's specific business use.</td>
+</tr>
+<tr class="even">
+<td>Data proposition</td>
+<td>Training-data categories, scale, cutoff date, multilingual coverage
+and preprocessing/filtering are described.</td>
+<td>Useful developmental evidence; a bank still has limited visibility
+into record-level training provenance and must treat unknowns as
+uncertainty.</td>
+</tr>
+<tr class="odd">
+<td>Model/system structure</td>
+<td>Model sizes, multimodal inputs, context limits and implementation
+information are documented.</td>
+<td>Supports conceptual understanding of W, but not the downstream bank
+system P, R, T, G and U.</td>
+</tr>
+<tr class="even">
+<td>Training / fitting</td>
+<td>Pre-trained and instruction-tuned variants are distinguished;
+training infrastructure is documented.</td>
+<td>Shows lineage and adaptation stages, but public documentation does
+not reproduce every development decision or parameter.</td>
+</tr>
+<tr class="odd">
+<td>Performance testing</td>
+<td>Google reports broad benchmark results across reasoning, factuality,
+STEM, code and other tasks.</td>
+<td>Strong general evidence, but benchmarks are not a substitute for
+production-like bank use-case testing.</td>
+</tr>
+<tr class="even">
+<td>Safety / robustness</td>
+<td>Structured safety evaluations and internal red teaming cover content
+safety and representational harms.</td>
+<td>Illustrates developer testing; financial applications require
+additional domain, privacy, access, RAG and business-control tests.</td>
+</tr>
+<tr class="odd">
+<td>Independent assurance</td>
+<td>Google describes 'assurance evaluations' conducted separately from
+the model-development team, with prompt sets held out from developers
+and results reported into release review.</td>
+<td>This is analogous in spirit to independent challenge, but it is not
+the bank's independent MRM validation.</td>
+</tr>
+<tr class="even">
+<td>Limitations / monitoring</td>
+<td>The model card states factual and other limitations and recommends
+continuous monitoring and human review for downstream uses.</td>
+<td>Consistent with the principle that approval evidence must be
+followed by use-specific monitoring.</td>
+</tr>
+</tbody>
+</table>
+<p>The assurance-evaluation process is particularly relevant to MRM.
+Google states that these evaluations are conducted separately from the
+development team for governance and release decisions; high-level
+findings may be fed back, while the prompt sets remain held out to
+reduce overfitting. This resembles two familiar validation principles:
+independence from development and protection of independent test
+data.</p>
+<table>
+<colgroup>
+<col style="width: 100%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>MRM assessment — what Gemma does and does not
+establish.</strong> Gemma's public documentation provides meaningful
+evidence about foundation-model development, general performance, safety
+testing, limitations, and an arms-length internal assurance process. It
+does not establish conceptual soundness, implementation correctness, or
+acceptable performance for a particular financial-institution
+application. The bank must independently assess the complete deployed
+system and its intended use.</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<p>Source: Google DeepMind, Gemma 3 Model Card; Google Responsible
+Generative AI Toolkit, 'Evaluate model and system for safety.'</p>
+<h1 id="genai-model-validation">5. GenAI Model Validation</h1>
+<p>Core concept Gen AI is not a standalone model, it is a system, and
+the validation is similar to what is called Large Model Framework, or
+aggregated model risk, the Gen AI risk is not the same as the
+combination of each single component of a Gen AI system, instead,
+validator has to validate Gen AI as a system, considering
+interdependence of each components</p>
+<p>Independent validation is the centerpiece of MRM. The objective is
+not to prove that an LLM is universally correct. The objective is to
+determine whether the complete GenAI system is conceptually sound for
+its intended purpose, performs within defined legal and risk-tolerance
+boundaries, is robust under foreseeable variation and attack, is
+correctly implemented, and has controls commensurate with its risk.legal
+boundries and</p>
+<h2 id="relationship-to-traditional-mrm">5.1 Relationship to traditional
+MRM</h2>
+<p>SR 26-2 revised interagency MRM guidance superseded SR 11-7 for
+models within its scope. Generative and agentic AI are outside that
+scope because they are novel and rapidly evolving, while organizations
+are expected to determine appropriate governance and controls for tools
+and systems outside the guidance. The traditional validation
+principles—conceptual soundness, implementation verification, outcomes
+analysis, effective challenge, governance, and ongoing monitoring—remain
+critical foundations, but they require extension for GenAI.</p>
+<h2 id="validation-object-and-validation-boundary">5.2 Validation object
+and validation boundary</h2>
+<p><span class="math inline">\(S = (W,D,P,R,T,G,U)\)</span> (5.1)</p>
+<p>S denotes the GenAI model/system; W represents the foundation model
+and model version; D the relevant data; P prompts and configuration; R
+retrieval; T tools; G guardrails and permissions; and U approved users,
+workflow, and use. Validation should assess each material component and
+then assess the components in combination. This is analogous to
+aggregate model risk / Large Model Framework practice: dependencies and
+interactions can create risks that are not visible in stand-alone
+component reviews.</p>
+<p>Validation establishes an approved operating envelope:</p>
+<p><span class="math inline">\(\mathcal{V = \{}S:\text{tested
+configuration, use, and risk remain within approved limits}\}\)</span>
+(5.2)</p>
+<p>A practical component-by-component validation map is:</p>
+<table>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Component</th>
+<th>Independent validation focus</th>
+<th>Combined-system question</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>W — model</td>
+<td>Capabilities, limitations, task performance, version, vendor
+evidence</td>
+<td>Does model behavior remain acceptable when used with actual
+prompts/context/tools?</td>
+</tr>
+<tr class="even">
+<td>D — data</td>
+<td>Quality, provenance, representativeness, contamination, privacy</td>
+<td>Do data limitations interact with model behavior or use?</td>
+</tr>
+<tr class="odd">
+<td>P — prompts/configuration</td>
+<td>Instruction hierarchy, prompt sensitivity, decoding settings</td>
+<td>Can prompt/context combinations cause material inconsistency or
+control bypass?</td>
+</tr>
+<tr class="even">
+<td>R — retrieval</td>
+<td>Knowledge base, chunking, metadata, recall, reranking,
+permissions</td>
+<td>Does retrieval improve grounding without introducing
+stale/unauthorized/malicious context?</td>
+</tr>
+<tr class="odd">
+<td>T — tools</td>
+<td>Tool choice, parameters, permissions, error handling</td>
+<td>Can a model error become an external action or loss?</td>
+</tr>
+<tr class="even">
+<td>G — guardrails</td>
+<td>Filters, access controls, human gates, limits</td>
+<td>Do controls remain effective under realistic and adversarial
+cases?</td>
+</tr>
+<tr class="odd">
+<td>U — use</td>
+<td>Users, workflow, expertise, downstream decision</td>
+<td>Is the system suitable for actual users and consequences?</td>
+</tr>
+<tr class="even">
+<td>Combined system</td>
+<td>End-to-end scenarios and production-like tests</td>
+<td>Do interactions create risks not visible in component tests?</td>
+</tr>
+</tbody>
+</table>
+<h2 id="validation-procedure">5.3 Validation procedure</h2>
+<p>A validator can follow the following sequence:</p>
+<table>
+<colgroup>
+<col style="width: 6%"/>
+<col style="width: 11%"/>
+<col style="width: 10%"/>
+<col style="width: 10%"/>
+<col style="width: 11%"/>
+<col style="width: 10%"/>
+<col style="width: 5%"/>
+<col style="width: 13%"/>
+<col style="width: 8%"/>
+<col style="width: 10%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>1. Define scope</th>
+<th>2. Review development</th>
+<th>3. Risk assessment</th>
+<th>4. Conceptual challenge</th>
+<th>5. Build independent tests</th>
+<th>6. Component tests</th>
+<th>7. End-to-end tests</th>
+<th>8. Implementation verification</th>
+<th>9. Residual risk</th>
+<th>10. Conclusion &amp; monitoring</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<ul>
+<li><p>Define the validation object, intended use, users, materiality,
+prohibited uses, and system boundary.</p></li>
+<li><p>Review development documentation and identify important
+assumptions, limitations, vendor information gaps, and
+developer-identified issues.</p></li>
+<li><p>Perform an inherent-risk assessment to determine validation depth
+and required specialist participation.</p></li>
+<li><p>Challenge model and component selection, architecture, data
+proposition, RAG/tool design, controls, and use-case
+suitability.</p></li>
+<li><p>Design an independent test suite that is separate from
+development evidence and representative of production risk.</p></li>
+<li><p>Test each material component in Equation (5.1) with
+component-specific evidence. For W, test capability, limitations,
+stability, and version behavior; for D, test provenance,
+representativeness, contamination, privacy, and data transformations;
+for P, test instruction hierarchy, decoding settings, prompt
+sensitivity, and prohibited-instruction handling; for R, measure
+retrieval recall/precision, reranking, freshness, entitlement filters,
+and grounding; for T, test tool selection, parameter construction,
+permissions, failure handling, and rollback; for G, challenge filters,
+access controls, human gates, and policy rules; and for U, test actual
+users, workflows, downstream decisions, and human reliance.</p></li>
+<li><p>Test the integrated system with production-like end-to-end
+scenarios. Include normal cases; difficult and ambiguous cases; boundary
+cases near approved-use limits; missing or conflicting evidence;
+long-context and distractor cases; misuse and prohibited-use attempts;
+direct and indirect prompt injection; unauthorized-data and tool-access
+attempts; high-consequence actions; component outages; malformed tool
+outputs; and model/RAG/version changes. Where generation is stochastic,
+repeat cases across seeds or runs and estimate both average performance
+and tail failure rates. Record severity, reproducibility, root cause,
+control effectiveness, and whether the failure breaches a hard
+limit.</p></li>
+<li><p>Verify that the production implementation matches the validated
+configuration.</p></li>
+<li><p>Assess limitations, compensating controls, unresolved issues, and
+residual risk.</p></li>
+<li><p>Issue the validation conclusion and specify monitoring
+thresholds, conditions, and revalidation triggers.</p></li>
+<li><p>Adequately document validation results, including validators’
+challenges, communication with model developer and model owner, test
+design and purpose, validation findings, model deficiency classification
+and follow up and remediation plan</p></li>
+</ul>
+<h2 id="risk-based-validation-planning">5.4 Risk-based validation
+planning</h2>
+<p>Risk-based validation does not mean simply assigning a numerical
+score. It means that the scope, depth, sample size, independence,
+expertise, frequency, and approval requirements should increase with the
+potential consequence and uncertainty of the system.</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 24%"/>
+<col style="width: 24%"/>
+<col style="width: 25%"/>
+<col style="width: 25%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Risk driver</th>
+<th>Lower-risk example</th>
+<th>Higher-risk example</th>
+<th>Validation implication</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Business impact</td>
+<td>Internal drafting</td>
+<td>Credit/advice/transaction decision</td>
+<td>More stringent outcome and control testing</td>
+</tr>
+<tr class="even">
+<td>Autonomy</td>
+<td>Human reads answer</td>
+<td>System executes action</td>
+<td>Tool/permission/rollback tests become critical</td>
+</tr>
+<tr class="odd">
+<td>Data sensitivity</td>
+<td>Public information</td>
+<td>Customer/confidential data, biases, fair lending</td>
+<td>Privacy/access tests deepen, assess data fairness</td>
+</tr>
+<tr class="even">
+<td>External exposure</td>
+<td>Internal user</td>
+<td>Customer/public output</td>
+<td>More misuse, conduct and reputational testing</td>
+</tr>
+<tr class="odd">
+<td>Complexity</td>
+<td>Single model/prompt</td>
+<td>RAG + tools + agents</td>
+<td>More component and interaction testing</td>
+</tr>
+<tr class="even">
+<td>Changeability</td>
+<td>Pinned version/static knowledge base</td>
+<td>Frequent vendor/RAG/tool changes</td>
+<td>Stronger regression and revalidation triggers</td>
+</tr>
+<tr class="odd">
+<td>Opacity</td>
+<td>Well-documented internal model</td>
+<td>Opaque third-party model</td>
+<td>More independent empirical testing/compensating controls</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col style="width: 100%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Key point. The risk-based plan should explicitly cover guardrails,
+compliance/control adherence, and adaptive or recursive-change risk
+where applicable. It should answer four questions: What can go wrong?
+How serious could it be? How much independent evidence is needed? Which
+failures are non-compensable and therefore require hard limits rather
+than average scores?</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<h2 id="model-and-system-selection-conceptual-soundness">5.5 Model and
+system selection / conceptual soundness</h2>
+<p>For GenAI, conceptual soundness is a system-selection question. The
+validator should challenge not only the choice of foundation model but
+also the choices of data, prompts, RAG, tools, guardrails, deployment
+method, and human controls.</p>
+<p>The validator should ask, among other questions:</p>
+<ul>
+<li><p>Is GenAI appropriate for the business purpose, or would a
+deterministic workflow, search engine, statistical model, or narrower ML
+model be safer and sufficient?</p></li>
+<li><p>Why was this foundation model selected over credible
+alternatives? What trade-offs were made among capability, privacy, cost,
+latency, transparency, and stability?</p></li>
+<li><p>Is RAG needed? If so, why is the chosen knowledge base, embedding
+model, chunking, retrieval, and reranking design appropriate?</p></li>
+<li><p>Are tools necessary? Are their permissions no broader than
+required?</p></li>
+<li><p>Are the prompt and guardrail architecture appropriate for the
+user population and consequence of error?</p></li>
+<li><p>Does the system depend on a context window, vendor feature, or
+model behavior that is unstable or insufficiently understood?</p></li>
+</ul>
+<p>Does the design identify applicable legal, regulatory, policy,
+disclosure, recordkeeping, privacy, suitability, and approval
+requirements, and are guardrails and permissions demonstrably effective
+rather than merely documented?</p>
+<ul>
+<li><p>Compliance, guardrails, permissions etc.</p></li>
+<li><p>Are human controls realistic, or are they likely to become
+rubber-stamp approvals?</p></li>
+</ul>
+<h2 id="vendor-foundation-models-and-third-party-genai-services.-most-financial-institutions-will-use-at-least-one-third-party-foundation-model-hosted-api-embedding-model-vector-database-safety-service-or-other-external-component.-vendor-use-does-not-transfer-model-risk-accountability.-validation-should-assess-vendor-technical-documentation-model-cards-training-data-disclosures-and-limitations-evaluation-evidence-versioning-and-change-notification-practices-security-and-privacy-commitments-data-retention-and-training-use-terms-geographicdata-residency-constraints-incident-history-service-dependencies-concentration-and-substitution-risk-and-contractual-auditaccess-rights.-where-proprietary-restrictions-prevent-full-transparency-the-institution-should-document-the-information-gap-and-compensate-with-stronger-independent-empirical-testing-tighter-operating-limits-monitoring-fallback-arrangements-and-change-controls.">Vendor
+foundation models and third-party GenAI services. Most financial
+institutions will use at least one third-party foundation model, hosted
+API, embedding model, vector database, safety service, or other external
+component. Vendor use does not transfer model-risk accountability.
+Validation should assess vendor technical documentation, model cards,
+training-data disclosures and limitations, evaluation evidence,
+versioning and change-notification practices, security and privacy
+commitments, data-retention and training-use terms,
+geographic/data-residency constraints, incident history, service
+dependencies, concentration and substitution risk, and contractual
+audit/access rights. Where proprietary restrictions prevent full
+transparency, the institution should document the information gap and
+compensate with stronger independent empirical testing, tighter
+operating limits, monitoring, fallback arrangements, and change
+controls.</h2>
+<h2 id="independent-test-design-how-to-build-a-usable-test-suite">5.6
+Independent test design: how to build a usable test suite</h2>
+<p>The independent test set should not be a loose collection of prompts.
+It should be designed from the approved use cases and failure modes. A
+practical construction process is:</p>
+<table>
+<colgroup>
+<col style="width: 12%"/>
+<col style="width: 12%"/>
+<col style="width: 12%"/>
+<col style="width: 12%"/>
+<col style="width: 12%"/>
+<col style="width: 12%"/>
+<col style="width: 12%"/>
+<col style="width: 12%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Use cases</th>
+<th>Risk scenarios</th>
+<th>Prompt strata</th>
+<th>Expected result / rubric</th>
+<th>Independent cases</th>
+<th>Run repetitions</th>
+<th>Human adjudication</th>
+<th>Metrics &amp; severity</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<p>First, divide production use into meaningful strata? layers? —for
+example policy questions, summarization, extraction, calculation, or
+tool actions. Second, identify normal cases, difficult cases, boundary
+cases, misuse, and adversarial cases within each stratum. Third, define
+an expected answer, authoritative source, or scoring rubric before
+seeing model output where possible. Fourth, create independent cases not
+used in development. Fifth, repeat stochastic tests when variability
+matters. Finally, classify errors by materiality rather than counting
+all wording differences equally.</p>
+<p>Technical construction of the independent test suite. Define a
+sampling frame from approved use cases and risk scenarios; stratify by
+task, user type, data sensitivity, consequence, language, and
+difficulty; reserve a held-out set that developers have not seen;
+pre-specify expected answers or scoring rubrics; randomize case order;
+run repeated trials when temperature or sampling creates stochasticity;
+use blinded human adjudication for subjective outputs; calculate
+confidence intervals for key rates; and separately report severe
+failures rather than allowing them to disappear in averages. For paired
+robustness tests, compare the baseline prompt with controlled
+perturbations and measure the change in business-relevant output. For
+RAG, label relevant source documents so retrieval recall and precision
+can be measured independently of generation quality.</p>
+<p>Example paired robustness statistic:</p>
+<p><span class="math display">\[R_{fail} = \frac{1}{n}\sum_{i =
+1}^{n}\mathbf{1}\left\{ d\left( y_{i},y_{i}^{'} \right) &gt;
+\tau_{i} \right\}\]</span></p>
+<p>Here y_i is the baseline output, y_i′ is the output after a
+controlled meaning-preserving perturbation, d(·) is a business-relevant
+difference measure, and τ_i is the tolerance. The validator should
+define d and τ before observing results wherever feasible.</p>
+<p>For RAG retrieval, if Rel(q) is the labeled set of relevant chunks
+and Ret_k(q) is the top-k retrieved set, then recall@k and precision@k
+can be written as:</p>
+<p><span class="math display">\[Recall@k = \frac{\left| Rel(q) \cap
+{Ret}_{k}(q) \right|}{\left| Rel(q) \right|},\quad\quad Precision@k =
+\frac{\left| Rel(q) \cap {Ret}_{k}(q) \right|}{k}\]</span></p>
+<p>Example. Suppose four chunks {A, B, C, D} are labeled relevant for a
+query and the system retrieves five chunks {A, B, E, F, G}. Two of four
+relevant chunks were retrieved, so Recall@5 = 2/4 = 0.50. Two of five
+retrieved chunks are relevant, so Precision@5 = 2/5 = 0.40. Recall
+measures coverage of relevant evidence; precision measures the relevance
+of retrieved evidence. Both should be interpreted together.</p>
+<p>Generation should then be tested separately for claim support,
+citation correctness, material omissions, and appropriate abstention.
+This decomposition helps identify whether a bad answer originated in
+retrieval, generation, or the interaction between them.</p>
+<p>Common independent test families include:</p>
+<table>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Test family</th>
+<th>Purpose</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Benchmark/task tests</td>
+<td>Measure normal task performance</td>
+<td>Correct policy answer or field extraction</td>
+</tr>
+<tr class="even">
+<td>Ground-truth tests</td>
+<td>Compare against authoritative evidence</td>
+<td>Claim verified against approved policy</td>
+</tr>
+<tr class="odd">
+<td>Prompt sensitivity? tests</td>
+<td>Measure prompt sensitivity/robustness</td>
+<td>Paraphrase, typo, format change</td>
+</tr>
+<tr class="even">
+<td>Boundary tests</td>
+<td>Test edge of approved use</td>
+<td>Very long context or ambiguous request</td>
+</tr>
+<tr class="odd">
+<td>Negative / abstention tests</td>
+<td>Test behavior when answer should not be given</td>
+<td>Missing evidence or prohibited request</td>
+</tr>
+<tr class="even">
+<td>Counterfactual tests</td>
+<td>Test sensitivity to changed facts</td>
+<td>Change borrower fact and check conclusion</td>
+</tr>
+<tr class="odd">
+<td>Metamorphic tests</td>
+<td>Check expected relation across transformed inputs</td>
+<td>Reorder irrelevant text; result should remain stable</td>
+</tr>
+<tr class="even">
+<td>Adversarial/red-team tests</td>
+<td>Test security/control failure</td>
+<td>Prompt injection, jailbreak, malicious RAG document</td>
+</tr>
+<tr class="odd">
+<td>Access/permission tests</td>
+<td>Test data/tool boundaries</td>
+<td>Unauthorized document or write action</td>
+</tr>
+<tr class="even">
+<td>Stress tests</td>
+<td>Test scale/complexity</td>
+<td>Long context, many documents, repeated tool calls</td>
+</tr>
+<tr class="odd">
+<td>End-to-end scenario tests</td>
+<td>Test component interactions</td>
+<td>Prompt → RAG → model → tool → human workflow</td>
+</tr>
+<tr class="even">
+<td>Regression tests</td>
+<td>Detect behavior change after update</td>
+<td>Compare new model/RAG/prompt with validated baseline</td>
+</tr>
+</tbody>
+</table>
+<h2 id="adaptiverecursive-change-testing.-where-a-system-can-autonomously-revise-code-prompts-tools-policies-memory-or-model-components-validation-should-test-authority-boundaries-approval-gates-rollback-monitoring-and-whether-iterative-changes-can-compound-errors-or-bypass-controls.-ordinary-vendor-model-updates-are-change-managementversion-risk-rather-than-recursive-self-improvement-unless-the-deployed-system-itself-can-initiate-or-implement-material-self-modification.">Adaptive/recursive-change
+testing. Where a system can autonomously revise code, prompts, tools,
+policies, memory, or model components, validation should test authority
+boundaries, approval gates, rollback, monitoring, and whether iterative
+changes can compound errors or bypass controls. Ordinary vendor model
+updates are change-management/version risk rather than recursive
+self-improvement unless the deployed system itself can initiate or
+implement material self-modification.</h2>
+<h2 id="the-genai-validation-vector">5.7 The GenAI Validation
+Vector</h2>
+<p><span class="math inline">\(V_{GAI} = (A,F,G,R,S,B,P,C,U)\)</span>
+(5.3)</p>
+<p>A = task accuracy, F = factuality, G = groundedness, R = robustness,
+S = safety, B = bias/fairness, P = privacy, C = cybersecurity, K =
+compliance/control adherence, and U = use-case suitability. Compliance
+is included explicitly because a system can be accurate and factually
+grounded yet still violate a law, policy, disclosure rule, suitability
+requirement, permission boundary, or required human-approval step. The
+vector is not intended to imply that every dimension is measured with
+the same statistic. Its purpose is to prevent a single performance
+number from hiding important risk dimensions.</p>
+<p><span class="math inline">\(Score = \sum_{j =
+1}^{m}w_{j}V_{j},\quad\quad\sum_{j}^{}w_{j} = 1\)</span> (5.4)</p>
+<p>A weighted score may be useful for summary reporting, but severe
+failures in non-compensable dimensions—such as confidential-data leakage
+or unauthorized transaction execution—should be subject to hard limits
+and should not be offset by strong scores elsewhere.</p>
+<p>The purpose of independent validation is not to manufacture a
+scorecard. Scores can summarize evidence, but validation should identify
+model/system deficiencies, boundaries, implementation constraints,
+misuse pathways, and residual risk, and determine whether controls
+adequately mitigate those risks. Deficiencies should be addressed
+individually and classified by severity. An issue is a material
+deficiency that may constrain or prevent approval and requires formal
+remediation and closure. An observation is a lower-severity weakness or
+emerging concern that may be tolerable within the approved operating
+envelope but requires action, monitoring, or follow-up. Severe
+non-compensable failures should not be averaged away by strong
+performance elsewhere.</p>
+<h2 id="task-accuracy-and-outcome-analysis">5.8 Task accuracy and
+outcome analysis</h2>
+<p>Metrics should follow the task. Classification may use accuracy,
+precision, recall, F1, ROC-AUC, or calibration. Extraction may use exact
+match or field-level error. Summarization may require expert scoring for
+completeness and material omission. The validator should define a
+material business error, not merely a linguistic difference.</p>
+<h2 id="factuality-and-hallucination-testing">5.9 Factuality and
+hallucination testing</h2>
+<p><span class="math inline">\(Material\ Claim\ Error\ Rate = \frac{\#\
+material\ unsupported/incorrect\ claims}{\#\ material\ claims\
+evaluated}\)</span> (5.5)</p>
+<p>Testing should separate harmless wording differences from material
+factual errors and should stratify results by severity and subject
+matter. Human adjudication may be required. Where reviewers disagree,
+inter-rater agreement should be measured and disagreement resolved
+through a documented process.</p>
+<h2 id="rag-validation-retrieval-grounding-and-citation">5.10 RAG
+validation: retrieval, grounding, and citation</h2>
+<p>RAG validation should separate retrieval quality from generation
+quality.</p>
+<p><span class="math inline">\(Recall@k = \frac{\#\ relevant\ items\
+retrieved\ in\ top\ k}{\#\ relevant\ items}\)</span> (5.6)</p>
+<p><span class="math inline">\(Precision@k = \frac{\#\ relevant\ items\
+retrieved\ in\ top\ k}{k}\)</span> (5.7)</p>
+<p>The validator should test the corpus and effective dates; parsing and
+chunking; metadata; embedding model; retrieval and reranking; access
+filters; conflicting sources; context construction; groundedness;
+citation correctness; and behavior when no adequate source exists. A
+system that answers confidently when retrieval fails may be less
+acceptable than one that abstains.</p>
+<h2 id="robustness-and-prompt-sensitivity">5.11 Robustness and prompt
+sensitivity</h2>
+<p><span class="math inline">\(x\mathcal{' \in N}(x)\quad\text{with
+approximately preserved meaning}\)</span> (5.8)</p>
+<p><span class="math inline">\(d\left( f(x),f(x') \right) \leq
+\tau\)</span> (5.9)</p>
+<p>x is the baseline prompt, x′ is a meaning-preserving perturbation, d
+measures the business-relevant difference between outputs, and τ is the
+acceptable tolerance. Tests should include paraphrases, formatting
+changes, typos, long context, distractors, multilingual prompts where
+relevant, and conflicting instructions.</p>
+<h2 id="bias-fairness-and-representativeness">5.12 Bias, fairness, and
+representativeness</h2>
+<p>Fairness testing should be tied to the actual use case and applicable
+requirements. The validator should test whether sensitive attributes,
+proxies, language varieties, or demographic context produce unjustified
+differences in quality or treatment. Open-ended output may require
+expert qualitative review in addition to statistical disparity
+measures.</p>
+<h2 id="privacy-and-memorization-testing">5.13 Privacy and memorization
+testing</h2>
+<p>Validation should examine whether confidential information can enter
+prompts or retrieval context, whether the model can reproduce protected
+information, whether connected tools expose data beyond need-to-know,
+and whether logs create a second privacy exposure. Controlled
+secrets/canaries, extraction attempts, and access-control scenarios can
+be useful.</p>
+<h2 id="cybersecurity-and-adversarial-testing">5.14 Cybersecurity and
+adversarial testing</h2>
+<p>The test plan should include direct and indirect prompt injection,
+jailbreaks, system-prompt extraction, data exfiltration, malicious
+documents, tool abuse, excessive agency, privilege escalation, unsafe
+output handling, and poisoning scenarios. For agentic systems, the
+validator must test both whether the model can be manipulated and what
+it is technically permitted to do after manipulation.</p>
+<h2 id="agentic-ai-and-tool-use-validation">5.15 Agentic AI and tool-use
+validation</h2>
+<p>Agentic validation extends output validation to action validation.
+Tests should verify tool selection, parameter construction, permissions,
+transaction limits, confirmation requirements, error recovery, loop
+termination, and refusal of unauthorized goals.</p>
+<p><span class="math inline">\(Expected\ Loss \approx P(error) \times
+Impact(action)\)</span> (5.10)</p>
+<p>Even a low error probability can be unacceptable when the action is
+large, irreversible, financial, legal, or externally consequential.
+Human approval and deterministic permission controls should therefore be
+considered according to risk.</p>
+<h2 id="implementation-verification">5.16 Implementation
+verification</h2>
+<p>A conceptually sound design can fail through implementation. The
+validator should independently verify model and endpoint versions,
+prompts, retrieval indexes, access permissions, preprocessing, output
+parsing, fallback logic, caching, temperature/decoding settings, tool
+schemas, logging, monitoring, and consistency between development,
+validation, and production.</p>
+<table>
+<colgroup>
+<col style="width: 100%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>MRM Principle 5-A — Validate what is deployed.</strong> A
+benchmark result for a foundation model is not validation evidence for a
+production application if the deployed system uses different prompts,
+retrieval, tools, decoding parameters, permissions, or guardrails.</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<h2 id="effective-challenge">5.17 Effective challenge</h2>
+<p>Effective challenge remains central. Independence alone is not
+enough. The validation function needs sufficient technical competence,
+business understanding, and organizational authority to challenge
+model/component selection, data, vendor claims, evaluation design,
+security controls, and use. Validators should communicate challenges
+directly to model owners and developers, and material challenges should
+be resolved or formally dispositioned before validation is complete.
+Validation findings may be classified as issues or observations
+according to severity. Where remediation requires additional time, the
+validation report should specify interim controls, accountable owners,
+target dates, retesting requirements, and escalation criteria.
+Unresolved high-severity deficiencies should constrain approval or use
+rather than be offset by strengths elsewhere.</p>
+<h2 id="validation-limitations-and-residual-risk">5.18 Validation
+limitations and residual risk</h2>
+<p>No finite test suite can enumerate the full input space of a
+general-purpose language model. Validation therefore provides evidence
+about performance within an approved operating envelope rather than
+proof of universal safety. The report should state untested areas,
+unavailable vendor information, known weaknesses, uncertainty in human
+evaluation, benchmark limitations, and dependence on downstream
+controls.</p>
+<h2 id="validation-conclusion-and-approval-taxonomy">5.19 Validation
+conclusion and approval taxonomy</h2>
+<table>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Conclusion</th>
+<th>Meaning</th>
+<th>Typical action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Approved</td>
+<td>Risks controlled within tolerance</td>
+<td>Deploy within validated boundary</td>
+</tr>
+<tr class="even">
+<td>Approved with conditions</td>
+<td>Acceptable subject to specified controls</td>
+<td>Deploy with conditions and enhanced monitoring</td>
+</tr>
+<tr class="odd">
+<td>Restricted use</td>
+<td>Acceptable only for narrower scope/users/actions</td>
+<td>Limit permissions or use cases</td>
+</tr>
+<tr class="even">
+<td>Remediation required</td>
+<td>Material gaps must be corrected</td>
+<td>Do not expand; remediate and retest</td>
+</tr>
+<tr class="odd">
+<td>Not approved</td>
+<td>Residual risk exceeds tolerance</td>
+<td>Do not deploy / suspend use</td>
+</tr>
+</tbody>
+</table>
+<h2 id="independent-validation-work-program">5.20 Independent validation
+work program</h2>
+<table>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Workstream</th>
+<th>Illustrative procedures</th>
+<th>Evidence/output</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Scope &amp; inventory</td>
+<td>Map model, data, prompts, RAG, tools, users and permissions</td>
+<td>Validated system boundary</td>
+</tr>
+<tr class="even">
+<td>Development review</td>
+<td>Review development process, choices, tests and known issues</td>
+<td>Development assessment</td>
+</tr>
+<tr class="odd">
+<td>Conceptual soundness</td>
+<td>Challenge system/component selection and architecture</td>
+<td>Conceptual assessment</td>
+</tr>
+<tr class="even">
+<td>Data/RAG</td>
+<td>Test provenance, contamination, retrieval, freshness,
+permissions</td>
+<td>Data/RAG findings</td>
+</tr>
+<tr class="odd">
+<td>Independent performance</td>
+<td>Build held-out production-like test suite</td>
+<td>Performance results</td>
+</tr>
+<tr class="even">
+<td>Factuality/grounding</td>
+<td>Verify claims, sources, citations, abstention</td>
+<td>Hallucination/grounding results</td>
+</tr>
+<tr class="odd">
+<td>Robustness</td>
+<td>Paraphrase, distractor, long-context, boundary tests</td>
+<td>Sensitivity analysis</td>
+</tr>
+<tr class="even">
+<td>Fairness/privacy</td>
+<td>Group tests, canary/leakage/access tests</td>
+<td>Fairness/privacy assessment</td>
+</tr>
+<tr class="odd">
+<td>Security/agent</td>
+<td>Injection, jailbreak, tool-abuse and permission tests</td>
+<td>Security/agency findings</td>
+</tr>
+<tr class="even">
+<td>Implementation</td>
+<td>Verify production configuration and controls</td>
+<td>Implementation verification</td>
+</tr>
+<tr class="odd">
+<td>Governance</td>
+<td>Review ownership, issues, monitoring and change control</td>
+<td>Residual-risk conclusion</td>
+</tr>
+</tbody>
+</table>
+<h2 id="table-5-b-summarizes-the-expected-challenge-remediation-and-closure-record-for-validation-findings.">Table
+5-B summarizes the expected challenge, remediation, and closure record
+for validation findings.</h2>
+<h2 id="section"></h2>
+<h2 id="performance-monitoring-handoff">5.21 Performance-monitoring
+handoff</h2>
+<p>Validation should end by specifying what must be monitored after
+approval. At minimum, the validator should identify critical metrics,
+thresholds, sampling frequency, incident triggers, drift indicators,
+security events, vendor/model-version changes, RAG knowledge-base
+changes, new tools, and conditions requiring revalidation. Part III
+develops this ongoing monitoring and dynamic-change framework.</p>
+<h2 id="case-study-5-a-anthropic-claude-evaluation-external-testing-and-mrm-assessment">Case
+Study 5-A — Anthropic Claude: Evaluation, External Testing, and MRM
+Assessment</h2>
+<p>Anthropic's Claude system cards provide a useful case for Section 5
+because they document model evaluation, safety/capability testing,
+external testing, deployment decisions, and an explicit risk-governance
+framework. Again, the case should not be described as SR 26-2
+compliance. It is better treated as evidence that can be challenged
+against MRM principles.</p>
+<p>Anthropic publishes system cards for successive Claude models. These
+cards describe model characteristics, evaluation methods, capability and
+safety testing, and deployment decisions. Recent system cards also
+distinguish internal evaluations from evaluations performed by external
+testers. Anthropic's Responsible Scaling Policy adds capability
+thresholds, safeguard assessments, documentation, governance, and
+periodic reassessment.</p>
+<table>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Validation principle</th>
+<th>Claude / Anthropic public practice</th>
+<th>MRM assessment / remaining gap</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Define validation object</td>
+<td>System cards identify the model version/snapshot and the evaluations
+performed on it.</td>
+<td>A bank must extend the boundary to its prompts, RAG, data, tools,
+guardrails, workflow and users.</td>
+</tr>
+<tr class="even">
+<td>Conceptual soundness / capability assessment</td>
+<td>Anthropic evaluates model capabilities and important risk domains
+and documents model characteristics and training information at a high
+level.</td>
+<td>Useful foundation-model evidence, but a bank must assess suitability
+for its own business purpose and alternatives.</td>
+</tr>
+<tr class="odd">
+<td>Independent test design</td>
+<td>Anthropic has emphasized difficult evaluations and, where possible,
+evaluation data not present in training data.</td>
+<td>Strong analogy to validation-data independence and generalization
+testing.</td>
+</tr>
+<tr class="even">
+<td>External / third-party testing</td>
+<td>System cards identify external testers in selected risk areas;
+Anthropic has publicly supported third-party evaluation ecosystems.</td>
+<td>External testing strengthens challenge, but it does not replace the
+bank's independent validation function.</td>
+</tr>
+<tr class="odd">
+<td>Adversarial / stress testing</td>
+<td>Capability, misuse, safety and autonomy-related evaluations are part
+of the published evaluation framework.</td>
+<td>A bank must add production-specific prompt injection, RAG, access,
+privacy, tool and workflow scenarios.</td>
+</tr>
+<tr class="even">
+<td>Safeguard assessment</td>
+<td>Responsible Scaling Policy links capability thresholds to stronger
+safeguards and evaluates whether safeguards are adequate.</td>
+<td>Analogous to assessing control effectiveness and residual risk.</td>
+</tr>
+<tr class="odd">
+<td>Release / approval decision</td>
+<td>Evaluation results inform deployment under defined safety standards
+and governance processes.</td>
+<td>Analogous to an approval decision, but bank approval must be based
+on its own risk appetite and use.</td>
+</tr>
+<tr class="even">
+<td>Ongoing reassessment</td>
+<td>Anthropic's framework includes repeated evaluations as capabilities,
+fine-tuning and tooling change.</td>
+<td>Strong analogy to ongoing monitoring/revalidation, but production
+outcome monitoring remains the user's responsibility.</td>
+</tr>
+</tbody>
+</table>
+<p>One especially relevant point is Anthropic's distinction between
+internal evaluation and external testing. A recent Claude system card
+states that evaluations are generally run in-house except where external
+testers are identified, and that external groups have evaluated selected
+risk areas. Anthropic has also argued that a robust third-party
+evaluation ecosystem is important because developer self-testing alone
+has limitations.</p>
+<p>This is close to the logic of effective challenge, but the analogy
+should not be overstated. An external safety evaluator may be
+independent of the model developer while still not performing the same
+role as a financial institution's MRM validator. The MRM validator must
+understand the bank's use case, materiality, data, controls, downstream
+decisions, and risk appetite.</p>
+<table>
+<colgroup>
+<col style="width: 100%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>MRM Principle 5-B — Vendor foundation-model assurance is
+necessary but not sufficient.</strong> Development testing, red teaming,
+assurance evaluation, and external testing performed for a foundation
+model can provide important validation evidence. They do not replace the
+user's independent assessment of conceptual soundness, implementation,
+performance, limitations, controls, and ongoing monitoring for the
+specific deployed GenAI system.</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<p>This principle is also consistent with the vendor-model logic in SR
+26-2 for models within its formal scope: proprietary limitations do not
+remove the banking organization's responsibility to understand
+conceptual soundness, design, development data and performance, and
+sound practice includes ongoing monitoring and outcome analysis. For
+GenAI, which SR 26-2 explicitly excludes from formal scope, this
+vendor-model principle is best used as an MRM analogy rather than a
+claim of regulatory applicability.</p>
+<p>Source: Anthropic, Model System Cards; Anthropic, Responsible Scaling
+Policy and related evaluation materials; Anthropic, 'A New Initiative
+for Developing Third-Party Model Evaluations.'</p>
+<h1 id="part-ii-summary">Part II Summary</h1>
+<p>Part II separates two activities that should remain distinct. Model
+development explains how the GenAI system is designed,
+fitted/configured, tested, controlled, and maintained. Independent
+validation challenges that work and produces its own evidence.</p>
+<ul>
+<li><p>GenAI development should follow a disciplined sequence from
+purpose and data through system structure, component selection,
+training/configuration, performance testing, tuning, controls,
+deployment, and maintenance.</p></li>
+<li><p>The technical foundation—tokenization, embeddings, attention,
+MLPs, and next-token training—matters because it explains both the
+capability and the limitations of LLMs.</p></li>
+<li><p>RAG, prompts, tools, guardrails, vendor services, and use are
+model-relevant system components because they can materially change
+behavior without changing foundation-model weights.</p></li>
+<li><p>Independent validation should test each material component and
+then test the complete system, with particular attention to
+interactions.</p></li>
+<li><p>A risk-based plan determines the depth and type of testing; it
+does not replace independent testing with a simple risk score.</p></li>
+<li><p>The final validation conclusion should state the approved
+operating envelope, limitations, conditions, residual risk, monitoring
+requirements, and revalidation triggers.</p></li>
+</ul>
+<p>Google DeepMind (2025). Gemma 3 Model Card. Google AI for
+Developers.</p>
+<p>Google AI for Developers. Responsible Generative AI Toolkit: Evaluate
+model and system for safety.</p>
+<p>Anthropic. Model System Cards (Claude series), including model
+capability, safety, external-testing, and deployment assessments.</p>
+<p>Anthropic (2024). A New Initiative for Developing Third-Party Model
+Evaluations.</p>
+<p>Anthropic. Responsible Scaling Policy and related
+implementation/reflection materials.</p>
+<h1 id="part-ii-references-and-further-reading">Part II References and
+Further Reading</h1>
+<p>1. Board of Governors of the Federal Reserve System, OCC, and FDIC
+(2026). Revised Guidance on Model Risk Management, SR 26-2, April 17,
+2026.</p>
+<p>2. Autio, C., Schwartz, R., Dunietz, J., Jain, S., Stanley, M.,
+Tabassi, E., Hall, P., and Roberts, K. (2024). Artificial Intelligence
+Risk Management Framework: Generative Artificial Intelligence Profile,
+NIST AI 600-1.</p>
+<p>3. NIST (2026). TEVV-Athlon Framework for Evaluating AI Systems,
+initial public draft materials for NIST AI 200-2.</p>
+<p>4. Vaswani, A. et al. (2017). Attention Is All You Need. Advances in
+Neural Information Processing Systems.</p>
+<p>5. Lewis, P. et al. (2020). Retrieval-Augmented Generation for
+Knowledge-Intensive NLP Tasks. Advances in Neural Information Processing
+Systems.</p>
+<p>6. OWASP GenAI Security Project (2025/2026). Guidance on prompt
+injection, sensitive information disclosure, data/model poisoning,
+excessive agency, and related GenAI application risks.</p>
+<p>7. Board of Governors of the Federal Reserve System and Office of the
+Comptroller of the Currency (2011). Supervisory Guidance on Model Risk
+Management, SR 11-7 / OCC 2011-12. The guidance directs banks to
+consider model risk from individual models and in the aggregate,
+including interactions and dependencies among models and common
+assumptions, data, or methodologies.<br/>
+8. Federal Reserve Bank of St. Louis, Ask the Fed. Model Risk Management
+supervisory presentation. Notes that many firms were in early stages of
+assessing aggregate model risk.<br/>
+9. Barclays (public model-risk role descriptions, 2025–2026). Large
+Model Framework responsibilities include evaluating the coherence of
+model interactions and the quality of aggregate results used for
+regulatory submissions or management decision-making, and assessing
+framework-level uncertainty.</p>
+<div class="footer">Converted from GenAI_MRM_Supplement_Part_II_V6_Reviewed.docx · Mathematical expressions rendered with MathJax</div></article></div></body>
+</html>
